@@ -2,6 +2,7 @@ import { Vector } from "../Vector.js";
 import { CelestialBody } from "../CelestialBody.js";
 import { Moon } from "./Moon.js";
 import { Physics } from "../Physics.js";
+import { Config } from "../config/config.js";
 
 export class Planet extends CelestialBody {
     moons: Moon[] = [];
@@ -17,7 +18,7 @@ export class Planet extends CelestialBody {
     }
 
     update(bodies: CelestialBody[]): void {
-        Physics.applyGravitationalForces(this, bodies);
+        Physics.applyGravitationalForces(this, bodies, Config.PLANET_SELFGRAVITY);
         Physics.updatePosition(this);
     }
 }

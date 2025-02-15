@@ -15,23 +15,23 @@
 			"mass": 10000,
 			"radius": 50,
 			"color": "#4169E1",
-			"position": [-1000, -1000],
-			"velocity": [2, -3],
+			"position": [-1500, -1500],
+			"velocity": [1.2, -2.2],
 			"moons": [
 				{
 					"name": "Moon",
 					"mass": 1,
 					"radius": 20,
 					"color": "#A9A9A9",
-					"orbitalDistance": 80,
+					"orbitalDistance": 90,
 					"orbitalSpeed": 4
 				}
 			]
 		},
 		{
 			"name": "Kepler22b",
-			"mass": 10000,
-			"radius": 50,
+			"mass": 20000,
+			"radius": 80,
 			"color": "#32CD32",
 			"position": [1000, 1000],
 			"velocity": [-2, 3],
@@ -41,8 +41,24 @@
 					"mass": 1,
 					"radius": 20,
 					"color": "#808080",
-					"orbitalDistance": 80,
+					"orbitalDistance": 200,
 					"orbitalSpeed": 4
+				},
+				{
+					"name": "Kepler-Moon2",
+					"mass": 1.2,
+					"radius": 30,
+					"color": "#808080",
+					"orbitalDistance": 230,
+					"orbitalSpeed": 3.5
+				},
+				{
+					"name": "Kepler-Moon3",
+					"mass": 1.3,
+					"radius": 40,
+					"color": "#808080",
+					"orbitalDistance": 280,
+					"orbitalSpeed": 3
 				}
 			]
 		}

@@ -15,7 +15,7 @@ export class Star extends CelestialBody {
 	}
 
 	update(bodies: CelestialBody[]): void {
-		Physics.applyGravitationalForces(this, bodies);
+		Physics.applyGravitationalForces(this, bodies, Config.STAR_SELFGRAVITY);
 		Physics.updatePosition(this);
 	}
 }

@@ -5,7 +5,8 @@ import { Config } from "./config/config.js";
 export class Physics {
 	static applyGravitationalForces(
 		body: CelestialBody,
-		bodies: CelestialBody[]
+		bodies: CelestialBody[],
+		application = 1
 	): void {
 		let totalForce = new Vector([0, 0]);
 
@@ -21,7 +22,8 @@ export class Physics {
 			}
 		}
 
-		body.acceleration = totalForce.scale(1 / body.mass);
+		body.acceleration = totalForce.scale(1 / body.mass)
+		body.acceleration =body.acceleration.scale(application)
 	}
 
 	static updatePosition(body: CelestialBody): void {

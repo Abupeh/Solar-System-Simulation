@@ -1,7 +1,7 @@
 import { Vector } from "./Vector.js";
 import { Config } from "./config/config.js";
 export class Physics {
-    static applyGravitationalForces(body, bodies) {
+    static applyGravitationalForces(body, bodies, application = 1) {
         let totalForce = new Vector([0, 0]);
         for (const otherBody of bodies) {
             if (otherBody !== body) {
@@ -14,6 +14,7 @@ export class Physics {
             }
         }
         body.acceleration = totalForce.scale(1 / body.mass);
+        body.acceleration = body.acceleration.scale(application);
     }
     static updatePosition(body) {
         body.velocity = body.velocity.add(body.acceleration.scale(Config.TIME_STEP));
