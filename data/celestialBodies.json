@@ -1,0 +1,50 @@
+{
+	"stars": [
+		{
+			"name": "Sun",
+			"mass": 100000,
+			"radius": 300,
+			"color": "#FFD700",
+			"position": [0, 0],
+			"velocity": [0, 0]
+		}
+	],
+	"planets": [
+		{
+			"name": "Earth",
+			"mass": 10000,
+			"radius": 50,
+			"color": "#4169E1",
+			"position": [-1000, -1000],
+			"velocity": [2, -3],
+			"moons": [
+				{
+					"name": "Moon",
+					"mass": 1,
+					"radius": 20,
+					"color": "#A9A9A9",
+					"orbitalDistance": 80,
+					"orbitalSpeed": 4
+				}
+			]
+		},
+		{
+			"name": "Kepler22b",
+			"mass": 10000,
+			"radius": 50,
+			"color": "#32CD32",
+			"position": [1000, 1000],
+			"velocity": [-2, 3],
+			"moons": [
+				{
+					"name": "Kepler-Moon",
+					"mass": 1,
+					"radius": 20,
+					"color": "#808080",
+					"orbitalDistance": 80,
+					"orbitalSpeed": 4
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,17 @@
+{
+    "name": "solar-system-simulation",
+    "version": "1.0.0",
+    "description": "",
+    "main": "dist/main.js",
+    "scripts": {
+      "start": "node .",
+      "build": "tsc --project tsconfig.json --watch",
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "type": "module",
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {}
+  }
+  
