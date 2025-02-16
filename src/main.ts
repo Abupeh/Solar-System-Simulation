@@ -1,11 +1,15 @@
-import { Canvas } from "./Canvas.js";
-import { SolarSystem } from "./SolarSystem.js";
-import { Vector } from "./Vector.js";
-import { fetchCelestialData } from "./fetchCelestialData.js";
+import { Canvas } from "./ui/Canvas.js";
+import { SolarSystem } from "./components/SolarSystem.js";
+import { Vector } from "./components/Vector.js";
+import { fetchCelestialData } from "./utils/fetchCelestialData.js";
+import { Updater } from "./updates/Updater.js";
+import { Star } from "./elements/Star.js";
 
-const canvas = new Canvas();
 const solarSystem = new SolarSystem(new Vector([0, 0]));
 const celestialData = await fetchCelestialData("./data/celestialBodies.json");
-
 solarSystem.importBodies(celestialData);
-solarSystem.useCanvas(canvas);
+
+const canvas = new Canvas(new Updater(solarSystem));
+canvas.render(solarSystem);
+
+console.log((solarSystem.bodies[0] as Star)?.astroids)

@@ -1,0 +1,23 @@
+body, html { 
+    margin: 0; 
+    padding: 0; 
+    overflow: hidden; 
+    background: black;
+}
+.canvas-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#trailCanvas {
+    z-index: 1;
+}
+#solarCanvas {
+    z-index: 2;
+}
