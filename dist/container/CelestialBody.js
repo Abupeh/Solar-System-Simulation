@@ -2,7 +2,7 @@ import { Vector } from "../components/Vector.js";
 export class CelestialBody {
     position;
     velocity;
-    acceleration;
+    acceleration = new Vector([0, 0]);
     name;
     mass;
     radius;
@@ -10,12 +10,8 @@ export class CelestialBody {
     trail = [];
     push = 0;
     constructor(body) {
-        this.name = body.name;
-        this.mass = body.mass;
-        this.radius = body.radius;
-        this.color = body.color;
-        this.position = new Vector(body.position);
-        this.velocity = new Vector(body.velocity);
-        this.acceleration = new Vector([0, 0]);
+        body.position = new Vector(body.position);
+        body.velocity = new Vector(body.velocity);
+        Object.assign(this, body);
     }
 }

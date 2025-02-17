@@ -1,0 +1,29 @@
+{
+	"stars": [],
+	"planets": [
+		{
+			"name": "Dione",
+			"mass": 1500,
+			"radius": 600,
+			"color": "#F39E60",
+			"position": [0, 0],
+			"velocity": [0, 0.2]
+		},
+		{
+			"name": "Sterop",
+			"mass": 1500,
+			"radius": 600,
+			"color": "#E16A54",
+			"position": [0, 30000],
+			"velocity": [0.1, 0]
+		},
+		{
+			"name": "Laius",
+			"mass": 1500,
+			"radius": 600,
+			"color": "#9F5255",
+			"position": [15000, 13000],
+			"velocity": [0.01, -0.2]
+		}
+	]
+}

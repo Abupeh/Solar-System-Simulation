@@ -1,8 +1,9 @@
 export class Vector {
 	public x: number;
 	public y: number;
-	constructor(position: [number, number]) {
-		[this.x, this.y] = position;
+	constructor(position: [number, number] | Vector) {
+		if (position instanceof Vector) [this.x, this.y] = [position.x, position.y];
+		else [this.x, this.y] = position;
 	}
 
 	add(v: Vector): Vector {
@@ -24,18 +25,5 @@ export class Vector {
 	normalize(): Vector {
 		const mag = this.magnitude();
 		return mag > 0 ? this.scale(1 / mag) : new Vector([0, 0]);
-	}
-
-	static gravitationalForce(
-		a: Vector,
-		b: Vector,
-		massA: number,
-		massB: number,
-		G: number
-	): Vector {
-		const delta = b.subtract(a);
-		const distance = delta.magnitude();
-		const forceMagnitude = (G * massA * massB) / (distance * distance);
-		return delta.normalize().scale(forceMagnitude);
 	}
 }

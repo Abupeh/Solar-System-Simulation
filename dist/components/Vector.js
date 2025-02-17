@@ -2,7 +2,10 @@ export class Vector {
     x;
     y;
     constructor(position) {
-        [this.x, this.y] = position;
+        if (position instanceof Vector)
+            [this.x, this.y] = [position.x, position.y];
+        else
+            [this.x, this.y] = position;
     }
     add(v) {
         return new Vector([this.x + v.x, this.y + v.y]);
@@ -19,11 +22,5 @@ export class Vector {
     normalize() {
         const mag = this.magnitude();
         return mag > 0 ? this.scale(1 / mag) : new Vector([0, 0]);
-    }
-    static gravitationalForce(a, b, massA, massB, G) {
-        const delta = b.subtract(a);
-        const distance = delta.magnitude();
-        const forceMagnitude = (G * massA * massB) / (distance * distance);
-        return delta.normalize().scale(forceMagnitude);
     }
 }

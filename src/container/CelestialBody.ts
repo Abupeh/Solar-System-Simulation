@@ -2,25 +2,22 @@ import { Vector } from "../components/Vector.js";
 import { CelestialBodyData } from "../utils/types.js";
 
 export abstract class CelestialBody {
-	position: Vector;
-	velocity: Vector;
-	acceleration: Vector;
-	public name: string;
-	public mass: number;
-	public radius: number;
-	public color: string;
+	public position!: Vector;
+	public velocity!: Vector;
+	public acceleration = new Vector([0, 0]);
+	public name!: string;
+	public mass!: number;
+	public radius!: number;
+	public color!: string;
+
 	public trail: number[][] = [];
 	public push: number = 0;
 
 	constructor(body: CelestialBodyData) {
-		this.name = body.name;
-		this.mass = body.mass;
-		this.radius = body.radius;
-		this.color = body.color;
+		body.position = new Vector(body.position);
+		body.velocity = new Vector(body.velocity);
 
-		this.position = new Vector(body.position);
-		this.velocity = new Vector(body.velocity);
-		this.acceleration = new Vector([0, 0]);
+		Object.assign(this, body);
 	}
 
 	abstract update(bodies: CelestialBody[]): void;

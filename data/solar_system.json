@@ -3,52 +3,49 @@
 		{
 			"name": "Sun",
 			"mass": 300000,
-			"radius": 3000,
+			"radius": 6000,
 			"color": "#FFD700",
 			"position": [0, 0],
-			"velocity": [0.1, 0],
-			"astroids": {
-				"count": 500,
-				"distance": 100000
-			}
+			"velocity": [0.01, 0]
 		}
 	],
 	"planets": [
 		{
 			"name": "Mercury",
-			"mass": 1000,
+			"mass": 200,
 			"radius": 300,
 			"color": "#8c8c94",
-			"position": [6000, 0],
-			"velocity": [0, -3.15]
+			"position": [0, 20000],
+			"velocity": [3.4, 1.5]
 		},
 		{
 			"name": "Venus",
-			"mass": 2900,
-			"radius": 490,
+			"mass": 3000,
+			"radius": 750,
 			"color": "#d3a567",
-			"position": [10000, 0],
-			"velocity": [0, -2.35]
+			"position": [0, 40000],
+			"velocity": [2.6, 1.3]
 		},
 		{
 			"name": "Earth",
-			"mass": 3000,
-			"radius": 500,
+			"mass": 3700,
+			"radius": 750,
 			"color": "#41e154",
-			"position": [15000, 0],
-			"velocity": [0, -2],
+			"position": [0, 100000],
+			"velocity": [1.6, 0.8],
 			"moons": [
 				{
 					"name": "Moon",
-					"mass": 24,
-					"radius": 136,
+					"mass": 37,
+					"radius": 190,
 					"color": "#DAD9D7",
-					"orbitalDistance": [1400, 0],
-					"orbitalVelocity": [0, -0.5]
+					"orbitalDistance": [0, 9000],
+					"orbitalVelocity": [0.4, 0.2]
 				}
 			]
 		},
 		{
+			"ignore": true,
 			"name": "Mars",
 			"mass": 2000,
 			"radius": 400,

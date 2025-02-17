@@ -1,26 +1,23 @@
+import { Vector } from "../components/Vector";
+
 export interface CelestialBodyData {
+	ignore?: boolean;
 	name: string;
 	mass: number;
 	radius: number;
 	color: string;
-	position: [number, number];
-	velocity: [number, number];
+	position: [number, number] | Vector;
+	velocity: [number, number] | Vector;
 	moons?: MoonData[];
-	astroids?: AstroidData;
-}
-
-export type AstroidData = {
-	count: number;
-	distance: number;
 }
 
 export interface SystemData {
-	appliedToMiddle: boolean;
 	stars: CelestialBodyData[];
 	planets: CelestialBodyData[];
 }
 
 export interface MoonData {
+	ignore?: boolean;
 	name: string;
 	mass: number;
 	radius: number;

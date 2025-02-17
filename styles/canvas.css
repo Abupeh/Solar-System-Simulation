@@ -15,7 +15,7 @@ canvas {
     left: 0;
 }
 
-#trailCanvas {
+#guiCanvas {
     z-index: 1;
 }
 #solarCanvas {

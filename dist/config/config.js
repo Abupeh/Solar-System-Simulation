@@ -1,26 +1,22 @@
 export const Config = {
+    //EXPERIMENTS
+    EXPERIMENTS: ["data/solar_system.json", "data/threebodyproblem.json"],
+    SELECT: 1,
     //COLORS
     BACKGROUND_COLOR: "#000000",
-    ASTROID_COLOR: "#ffffff",
     //ANIMATION
     TIME_STEP: 150,
-    TRAIL_LENGTH: 50,
-    TRAIL_PUSH: 6,
+    TRAIL_LENGTH: 150,
+    TRAIL_PUSH: 5,
     //CANVAS
-    APPLIED_TO_MIDDLE: true,
     WIDTH: window.innerWidth,
     HEIGHT: window.innerHeight,
-    SCROLL: 1.2,
-    INITIAL_SCROLL: 0.03,
+    SCROLL: 1.1,
+    INITIAL_SCROLL: 0.01,
     //PHYSICS
-    GRAVITATIONAL_CONSTANT: 0.2,
-    FORCE_MAGNITUDE: 2,
+    GRAVITATIONAL_CONSTANT: 1,
+    FORCE_MAGNITUDE: 2000,
     STAR_SELFGRAVITY: 0.1,
     PLANET_SELFGRAVITY: 1,
-    MOON_SELFGRAVITY: 1,
-    ASTROID_SELFGRAVITY: 0.0000001,
-    //ASTROID
-    ASTROID_MIN: 100,
-    ASTROID_MAX: 200,
-    ASTROID_DISTANCE: 200,
+    MOON_SELFGRAVITY: 1.2,
 };
