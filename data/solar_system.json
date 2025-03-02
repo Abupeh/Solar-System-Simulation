@@ -2,7 +2,7 @@
 	"stars": [
 		{
 			"name": "Sun",
-			"mass": 300000,
+			"mass": 30000,
 			"radius": 6000,
 			"color": "#FFD700",
 			"position": [0, 0],

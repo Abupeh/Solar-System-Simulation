@@ -1,22 +1,154 @@
-import { Config } from "../config/config";
+import { SolarSystem } from "../components/SolarSystem.js";
+import { Vector } from "../components/Vector.js";
+import { Config } from "../config/config.js";
+import { GuiConfig } from "../config/guiconfig.js";
+import { Moon } from "../elements/Moon.js";
+import { Planet } from "../elements/Planet.js";
+import { Star } from "../elements/Star.js";
+import { CelestialType } from "../utils/types.js";
+import { Camera } from "./Camera.js";
+import { Button } from "./elements/Button.js";
+type GuiElement = Button;
 
-class Gui {
-	canvas: HTMLCanvasElement;
-	ctx: CanvasRenderingContext2D;
+export class Gui {
+	public canvas = document.getElementById("canvas") as HTMLCanvasElement;
+	camera!: Camera;
 
-	constructor() {
-		this.canvas = document.getElementById("guiCanvas") as HTMLCanvasElement;
-		this.ctx = this.canvas.getContext("2d")!;
-
-		this.resize();
+	public elements: GuiElement[] = [];
+	constructor(public solarSystem: SolarSystem) {
+		this.createButtons();
+		this.canvas.addEventListener("click", (event) => this.global.callback(event));
 	}
 
-    public draw() {
-        
-    }
+	public global = {
+		clicks: 0,
+		callback(mouse: MouseEvent) {},
+		destroy() {
+			if (this.clicks <= 1) return;
+			this.clicks = 0;
+			this.callback = () => {};
+		},
+		onclick(callback: (mouse: MouseEvent) => void) {
+			this.clicks = 0;
+			this.callback = (mouse: MouseEvent) => {
+				this.clicks++;
+				this.destroy();
+				callback(mouse);
+			};
+		},
+		second() {
+			return this.clicks === 0;
+		},
+	};
 
-	public resize(): void {
-		this.canvas.width = Config.WIDTH;
-		this.canvas.height = Config.HEIGHT;
+	public follow = {
+		body: -1,
+		add: () => {
+			this.follow.body++;
+			if (this.follow.body >= this.solarSystem.bodies.length) this.follow.body = 0;
+		},
+		subtract: () => {
+			this.follow.body--;
+			if (this.follow.body < 0)
+				this.follow.body = this.solarSystem.bodies.length - 1;
+		},
+		toggle: () => {
+			if (this.follow.body == -1) return (this.follow.body = 0);
+			this.follow.body = -1;
+		},
+	};
+
+	public place = {
+		Planet: (mouse: MouseEvent) => {
+			return new Planet({
+				name: "Planet-" + this.solarSystem.bodies.length,
+				mass: 1500,
+				radius: 1000,
+				color: " #92ff9c",
+				position: this.camera.getRelativeMouse(mouse),
+				velocity: [0, 0],
+			});
+		},
+		Moon: (mouse: MouseEvent) => {
+			const moon = new Moon({
+				name: "Moon-" + this.solarSystem.bodies.length,
+				mass: 500,
+				radius: 300,
+				color: " #c9c9c9",
+				position: this.camera.getRelativeMouse(mouse),
+				velocity: [0, 0],
+			});
+			console.log(moon);
+			return moon;
+		},
+		Star: (mouse: MouseEvent) => {
+			return new Star({
+				name: "Star-" + this.solarSystem.bodies.length,
+				mass: 15000,
+				radius: 10000,
+				color: " #FFFAA0",
+				position: this.camera.getRelativeMouse(mouse),
+				velocity: [0, 0],
+			});
+		},
+	};
+	public placeType: CelestialType = "Planet";
+
+	public createButtons() {
+		//Add Celestial Body
+		const AddBody = new Button(1, 1, 4, 4, "+").onclick(() => {
+			this.canvas.style.cursor = "crosshair";
+			this.global.onclick((mouse) => {
+				if (!this.global.second()) return;
+				this.solarSystem.bodies.push(
+					this.place[this.placeType as keyof typeof this.place](mouse)
+				);
+			});
+		});
+
+		this.addElement(AddBody);
+		const CameraNext = new Button(11, 6, 4, 4, ">").onclick(() => {
+			this.follow.add();
+			this.camera.followingBody = this.solarSystem.bodies[this.follow.body];
+		});
+		this.addElement(CameraNext);
+
+		const CameraBack = new Button(1, 6, 4, 4, "<").onclick(() => {
+			this.follow.subtract();
+			this.camera.followingBody = this.solarSystem.bodies[this.follow.body];
+		});
+		this.addElement(CameraBack);
+
+		const FollowToggle = new Button(6, 6, 4, 4, "o").onclick(() => {
+			this.follow.toggle();
+			this.camera.followingBody = this.solarSystem.bodies[this.follow.body];
+		});
+		this.addElement(FollowToggle);
+
+		const ToStar = new Button(1, 11, 4, 4, "S").onclick(() => {
+			this.placeType = "Star";
+		});
+		this.addElement(ToStar);
+		const ToPlanet = new Button(6, 11, 4, 4, "P").onclick(() => {
+			this.placeType = "Planet";
+		});
+		this.addElement(ToPlanet);
+		const ToMoon = new Button(11, 11, 4, 4, "M").onclick(() => {
+			this.placeType = "Moon";
+		});
+		this.addElement(ToMoon);
+	}
+
+	public draw() {
+		this.elements.forEach((element) => element.draw());
+	}
+
+	addElement(elem: GuiElement) {
+		console.log(Config.WIDTH, elem.x, GuiConfig.SCALE);
+		elem.x = Config.WIDTH * (elem.x / GuiConfig.SCALE);
+		elem.y = Config.HEIGHT * (elem.y / GuiConfig.SCALE);
+		elem.width = Config.WIDTH * (elem.width / GuiConfig.SCALE);
+		elem.height = Config.HEIGHT * (elem.height / GuiConfig.SCALE);
+		this.elements.push(elem);
 	}
 }

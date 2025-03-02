@@ -4,23 +4,18 @@ import { Config } from "../config/config.js";
 import { CelestialBody } from "../container/CelestialBody.js";
 import { Updater } from "../updates/Updater.js";
 import { Camera } from "./Camera.js";
+import { Gui } from "./Gui.js";
 
 export class Canvas {
-	canvas: HTMLCanvasElement;
-	ctx: CanvasRenderingContext2D;
-	camera: Camera;
+	canvas = document.getElementById("canvas") as HTMLCanvasElement;
+	ctx = this.canvas.getContext("2d")!;
 	centerX = Config.WIDTH / 2;
 	centerY = Config.HEIGHT / 2;
+	camera = new Camera(this.canvas);
 
-	constructor(public updater: Updater) {
-		this.canvas = document.getElementById("solarCanvas") as HTMLCanvasElement;
-		this.ctx = this.canvas.getContext("2d")!;
-
-		this.camera = new Camera(this.canvas);
-		updater.canvas = this.canvas;
-
+	constructor(public updater: Updater, public gui: Gui) {
 		this.resize();
-		window.addEventListener("resize", () => this.resize());
+		this.gui.camera = this.camera;
 	}
 
 	public resize(): void {
@@ -28,24 +23,28 @@ export class Canvas {
 		this.canvas.height = Config.HEIGHT;
 	}
 
+	private toHex(rgb: number) {
+		let hex = rgb.toString(16);
+		return hex.length == 1 ? "0" + hex : hex;
+	}
 	public animate(body: CelestialBody) {
-		body.push++;
 		// Update trail
-		if (body.push > Config.TRAIL_PUSH) {
+		if (Config.TIME_STEP > 0) {
 			body.trail.push([body.position.x, body.position.y]);
-			body.push = 0;
+			if (body.trail.length > Config.TRAIL_LENGTH) body.trail.shift();
 		}
-		if (body.trail.length > Config.TRAIL_LENGTH) body.trail.shift();
 
 		// Draw trail
 		if (body.trail.length > 0) {
-			this.ctx.lineWidth = body.radius / 2;
-			this.ctx.beginPath();
-			for (const point of body.trail) {
-				this.ctx.lineTo(point[0], point[1]);
+			this.ctx.lineWidth = body.radius / Config.TRAIL_SIZE;
+			for (let i = 0; i < body.trail.length - 1; i++) {
+				this.ctx.beginPath();
+				const alpha = Math.floor((i / body.trail.length) * 255);
+				this.ctx.strokeStyle = body.color + this.toHex(alpha);
+				this.ctx.moveTo(body.trail[i-1]?.[0] || body.trail[i][0], body.trail[i-1]?.[1] || body.trail[i][1]);
+				this.ctx.lineTo(body.trail[i + 1][0], body.trail[i + 1][1]);
+				this.ctx.stroke();
 			}
-			this.ctx.strokeStyle = body.color + "ff"
-			this.ctx.stroke();
 		}
 
 		// Draw body
@@ -57,18 +56,23 @@ export class Canvas {
 			body.position.y,
 			body.radius
 		);
-		gradient.addColorStop(0, body.color);
-		gradient.addColorStop(1, body.color + "88");
+		gradient.addColorStop(0, body.color + "bb");
+		gradient.addColorStop(1, body.color);
 
 		this.ctx.beginPath();
 		this.ctx.arc(body.position.x, body.position.y, body.radius, 0, Math.PI * 2);
+		this.ctx.shadowColor = "#ffffff";
+		this.ctx.shadowBlur = Config.SHADOW_BLUR;
 		this.ctx.fillStyle = gradient;
 		this.ctx.fill();
 	}
 
-	first = true;
-
 	render(solarSystem: SolarSystem): void {
+		//Update
+		this.updater.update(solarSystem.bodies);
+		this.camera.follow();
+
+		//Draw
 		this.ctx.fillStyle = Config.BACKGROUND_COLOR;
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -81,12 +85,13 @@ export class Canvas {
 		this.ctx.translate(offset.x, offset.y);
 
 		for (const body of solarSystem.bodies) {
-			if(this.updater.pause) body.push = -1
 			this.animate(body);
-			this.updater.update(body);
 		}
 
 		this.ctx.restore();
+
+		//GUI
+		this.gui.draw();
 
 		requestAnimationFrame(() => this.render(solarSystem));
 	}

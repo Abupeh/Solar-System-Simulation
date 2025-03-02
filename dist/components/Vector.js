@@ -2,8 +2,10 @@ export class Vector {
     x;
     y;
     constructor(position) {
-        if (position instanceof Vector)
+        if (position instanceof Vector) {
+            console.log(position);
             [this.x, this.y] = [position.x, position.y];
+        }
         else
             [this.x, this.y] = position;
     }
@@ -15,6 +17,9 @@ export class Vector {
     }
     scale(scalar) {
         return new Vector([this.x * scalar, this.y * scalar]);
+    }
+    invScale(scalar) {
+        return new Vector([this.x / scalar, this.y / scalar]);
     }
     magnitude() {
         return Math.sqrt(this.x * this.x + this.y * this.y);

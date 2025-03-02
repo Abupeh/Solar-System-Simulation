@@ -14,10 +14,3 @@ canvas {
     top: 0;
     left: 0;
 }
-
-#guiCanvas {
-    z-index: 1;
-}
-#solarCanvas {
-    z-index: 2;
-}

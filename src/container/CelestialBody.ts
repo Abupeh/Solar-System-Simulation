@@ -1,3 +1,4 @@
+import { Physics } from "../components/Physics.js";
 import { Vector } from "../components/Vector.js";
 import { CelestialBodyData } from "../utils/types.js";
 
@@ -11,7 +12,6 @@ export abstract class CelestialBody {
 	public color!: string;
 
 	public trail: number[][] = [];
-	public push: number = 0;
 
 	constructor(body: CelestialBodyData) {
 		body.position = new Vector(body.position);
@@ -20,5 +20,10 @@ export abstract class CelestialBody {
 		Object.assign(this, body);
 	}
 
-	abstract update(bodies: CelestialBody[]): void;
+	updateVelocities(bodies: CelestialBody[]): void {
+		Physics.applyGravitationalForces(this, bodies);
+	}
+	updatePositions(): void {
+		Physics.updatePosition(this);
+	}
 }

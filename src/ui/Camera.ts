@@ -1,11 +1,14 @@
 import { Vector } from "../components/Vector.js";
 import { Config } from "../config/config.js";
+import { CelestialBody } from "../container/CelestialBody.js";
 
 export class Camera {
 	public zoom = Config.INITIAL_SCROLL;
-
-	private offset = new Vector([0, 0]);
+	private position = new Vector([0, 0]);
 	public drag = this.resetDrag();
+	public centerX = Config.WIDTH / 2;
+	public centerY = Config.HEIGHT / 2;
+
 	constructor(public canvas: HTMLCanvasElement) {
 		this.setupEventListeners();
 	}
@@ -19,12 +22,24 @@ export class Camera {
 		};
 	}
 
-	public goTo(position: Vector) {
-		this.offset = this.offset.subtract(position);
+	
+	public followingBody: CelestialBody | null = null;
+	public follow() {
+		if(!this.followingBody) return;
+		this.position = this.drag.offset.subtract(this.followingBody.position);
+	}
+
+	public getRelativeMouse(evt: MouseEvent) {
+		const following = this.followingBody?.position || this.position.scale(-1);
+		return following.add(this.getMouse(evt).subtract(this.getCenter()));
 	}
 
 	public getOffset() {
-		return this.offset.add(this.drag.offset);
+		return this.drag.offset.add(this.position);
+	}
+
+	private getCenter() {
+		return new Vector([this.centerX / this.zoom, this.centerY / this.zoom]);
 	}
 
 	public getMouse(evt: MouseEvent) {
@@ -42,7 +57,7 @@ export class Camera {
 	}
 
 	private handleScroll(event: WheelEvent): void {
-		if(this.drag.active) return;
+		if (this.drag.active) return;
 		this.zoom *= event.deltaY > 0 ? 1 / Config.SCROLL : Config.SCROLL;
 	}
 
@@ -61,7 +76,7 @@ export class Camera {
 
 	private handleMouseUp(): void {
 		if (!this.drag.active) return;
-		this.offset = this.offset.add(this.drag.offset);
+		this.position = this.position.add(this.drag.offset);
 		this.drag = this.resetDrag();
 
 		this.canvas.style.cursor = "";

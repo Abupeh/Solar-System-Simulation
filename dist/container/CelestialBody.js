@@ -1,3 +1,4 @@
+import { Physics } from "../components/Physics.js";
 import { Vector } from "../components/Vector.js";
 export class CelestialBody {
     position;
@@ -8,10 +9,15 @@ export class CelestialBody {
     radius;
     color;
     trail = [];
-    push = 0;
     constructor(body) {
         body.position = new Vector(body.position);
         body.velocity = new Vector(body.velocity);
         Object.assign(this, body);
+    }
+    updateVelocities(bodies) {
+        Physics.applyGravitationalForces(this, bodies);
+    }
+    updatePositions() {
+        Physics.updatePosition(this);
     }
 }

@@ -1,23 +1,21 @@
 import { CelestialBody } from "../container/CelestialBody.js";
-import { Config } from "../config/config.js";
-import { Physics } from "../components/Physics.js";
 import { CelestialBodyData, MoonData } from "../utils/types.js";
 import { Vector } from "../components/Vector.js";
 
 export class Moon extends CelestialBody {
-	constructor(body: MoonData, planet: CelestialBody) {
-		body.orbitalDistance = 
-		body.orbitalVelocity = 
-
+	constructor(body: CelestialBodyData);
+	constructor(body: MoonData, planet: CelestialBody);
+	constructor(body: MoonData | CelestialBodyData, planet?: CelestialBody) {
+		if (!planet) {
+			super(body as CelestialBodyData);
+			return;
+		}
+		const moonbody = body as MoonData;
+		const planetbody = planet as CelestialBody;
 		super({
 			...body,
-			position: new Vector(body.orbitalDistance).add(planet.position),
-			velocity: new Vector(body.orbitalVelocity).add(planet.velocity),
+			position: new Vector(moonbody.orbitalDistance).add(planetbody.position),
+			velocity: new Vector(moonbody.orbitalVelocity).add(planetbody.velocity),
 		});
-	}
-
-	update(bodies: CelestialBody[]): void {
-		Physics.applyGravitationalForces(this, bodies, Config.MOON_SELFGRAVITY);
-		Physics.updatePosition(this);
 	}
 }

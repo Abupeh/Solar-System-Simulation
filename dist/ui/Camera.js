@@ -3,8 +3,10 @@ import { Config } from "../config/config.js";
 export class Camera {
     canvas;
     zoom = Config.INITIAL_SCROLL;
-    offset = new Vector([0, 0]);
+    position = new Vector([0, 0]);
     drag = this.resetDrag();
+    centerX = Config.WIDTH / 2;
+    centerY = Config.HEIGHT / 2;
     constructor(canvas) {
         this.canvas = canvas;
         this.setupEventListeners();
@@ -17,11 +19,21 @@ export class Camera {
             active: false,
         };
     }
-    goTo(position) {
-        this.offset = this.offset.subtract(position);
+    followingBody = null;
+    follow() {
+        if (!this.followingBody)
+            return;
+        this.position = this.drag.offset.subtract(this.followingBody.position);
+    }
+    getRelativeMouse(evt) {
+        const following = this.followingBody?.position || this.position.scale(-1);
+        return following.add(this.getMouse(evt).subtract(this.getCenter()));
     }
     getOffset() {
-        return this.offset.add(this.drag.offset);
+        return this.drag.offset.add(this.position);
+    }
+    getCenter() {
+        return new Vector([this.centerX / this.zoom, this.centerY / this.zoom]);
     }
     getMouse(evt) {
         return new Vector([
@@ -56,7 +68,7 @@ export class Camera {
     handleMouseUp() {
         if (!this.drag.active)
             return;
-        this.offset = this.offset.add(this.drag.offset);
+        this.position = this.position.add(this.drag.offset);
         this.drag = this.resetDrag();
         this.canvas.style.cursor = "";
     }

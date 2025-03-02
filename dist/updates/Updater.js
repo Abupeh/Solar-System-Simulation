@@ -1,15 +1,15 @@
 import { Config } from "../config/config.js";
 export class Updater {
     solarSystem;
-    canvas;
     pause = false;
     time = Config.TIME_STEP;
     constructor(solarSystem) {
         this.solarSystem = solarSystem;
         this.setupEventListeners();
     }
-    update(body) {
-        body.update(this.solarSystem.bodies);
+    update(bodies) {
+        bodies.forEach((body) => body.updateVelocities(bodies));
+        bodies.forEach((body) => body.updatePositions());
     }
     setupEventListeners() {
         window.addEventListener("keydown", this.keydown.bind(this));
@@ -27,9 +27,9 @@ export class Updater {
                 Config.TIME_STEP = this.time += 1;
                 break;
             case "ArrowDown":
-                Config.TIME_STEP = this.time -= 1;
+                if (Config.TIME_STEP > 1)
+                    Config.TIME_STEP = this.time -= 1;
                 break;
         }
-        console.log(Config.TIME_STEP);
     }
 }
