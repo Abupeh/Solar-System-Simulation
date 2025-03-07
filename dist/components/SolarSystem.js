@@ -9,32 +9,15 @@ export class SolarSystem {
         this.position = position;
     }
     importBodies(data) {
-        // Create stars
-        data.stars.forEach((star_) => {
-            const star = new Star(star_);
-            this.bodies.push(star);
-        });
-        // Create planets and their moons
-        data.planets.forEach((planet_) => {
-            if (!planet_.ignore) {
-                const planet = new Planet(planet_);
-                // Create moons
-                planet_.moons?.forEach((moon_) => {
-                    if (!moon_.ignore) {
-                        const moon = new Moon(moon_, planet);
-                        planet.moons.push(moon);
-                        this.bodies.push(moon);
-                    }
-                });
-                this.bodies.push(planet);
-            }
-        });
+        this.bodies.push(...data.stars.map(star => new Star(star)));
+        this.bodies.push(...data.planets.map(planet => new Planet(planet)));
+        this.bodies.push(...data.moons.map(moon => new Moon(moon)));
     }
     selectPosition(name) {
         const body = this.bodies.find((body) => body.name === name);
-        return body?.position || new Vector([0, 0]);
+        return body?.position || null;
     }
     selectBody(name) {
-        return this.bodies.find((body) => body.name === name) || this.bodies[0];
+        return this.bodies.find((body) => body.name === name) || null;
     }
 }

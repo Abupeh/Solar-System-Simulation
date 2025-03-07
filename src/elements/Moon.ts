@@ -1,21 +1,28 @@
 import { CelestialBody } from "../container/CelestialBody.js";
-import { CelestialBodyData, MoonData } from "../utils/types.js";
+import { CelestialBodyData, CelestialBodyString } from "../utils/types.js";
 import { Vector } from "../components/Vector.js";
 
 export class Moon extends CelestialBody {
-	constructor(body: CelestialBodyData);
-	constructor(body: MoonData, planet: CelestialBody);
-	constructor(body: MoonData | CelestialBodyData, planet?: CelestialBody) {
-		if (!planet) {
-			super(body as CelestialBodyData);
-			return;
-		}
-		const moonbody = body as MoonData;
-		const planetbody = planet as CelestialBody;
-		super({
-			...body,
-			position: new Vector(moonbody.orbitalDistance).add(planetbody.position),
-			velocity: new Vector(moonbody.orbitalVelocity).add(planetbody.velocity),
-		});
+	static name = "Moon" as CelestialBodyString
+
+	constructor(body: CelestialBodyData, types?: string[]) {
+		super(body, types)
+	}
+
+	
+	static placeConfig = {
+		mass: 500,
+		radius: 300,
+		color: "#c9c9c9",
+		velocity: [0, 0],
+	} as CelestialBodyData;
+	static qualities = {
+
+	}
+
+	static types = ["Dwarf"]
+
+	hasQuality(type: typeof Moon.types[number]) {
+		return this.currentTypes.includes(type)
 	}
 }

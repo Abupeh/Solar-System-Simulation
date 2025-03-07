@@ -1,4 +1,7 @@
 export const GuiConfig = {
     SCALE: 100,
-    BUTTON_COLOR: "#A9A9A9"
+    BUTTON_COLOR: "#A9A9A9",
+    TOGGLE_COLOR: "#C9C9C9",
+    CONTAINER_COLOR: "#A3A3A3",
+    FRONT_CONTAINER_COLOR: "#838383"
 };

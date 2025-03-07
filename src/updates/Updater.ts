@@ -1,36 +1,68 @@
 import { SolarSystem } from "../components/SolarSystem.js";
+import { Vector } from "../components/Vector.js";
 import { Config } from "../config/config.js";
 import { CelestialBody } from "../container/CelestialBody.js";
 
 export class Updater {
 	public pause = false;
-	private time = Config.TIME_STEP;
+	private time = Config.ITERATIONS;
 	constructor(public solarSystem: SolarSystem) {
 		this.setupEventListeners();
 	}
-	public update(bodies: CelestialBody[]): void {
-		bodies.forEach((body) => body.updateVelocities(bodies));
-		bodies.forEach((body) => body.updatePositions());
+	public update(
+		bodies: CelestialBody[],
+		ignorePause = false,
+		body?: CelestialBody
+	) {
+		if (this.pause && !ignorePause) return;
+
+		for (let i = 0; i < Config.ITERATIONS; i++) {
+			bodies.forEach((body) => (body.velocity = body.updateVelocities(bodies)));
+			bodies.forEach((body) => (body.position = body.updatePositions()));
+		}
+		//Update Trail
+		if (body) return body.updateTrail(ignorePause);
+		bodies.forEach((body) => body.updateTrail(ignorePause));
 	}
 
 	private setupEventListeners(): void {
 		window.addEventListener("keydown", this.keydown.bind(this));
 	}
 
+	public updateIterations(body: CelestialBody) {
+		const saveState = JSON.stringify(this.solarSystem.bodies);
+		for (let i = 0; i < Config.MAX_ITERATIONS; i++)
+			this.update(this.solarSystem.bodies, true, body);
+		const finalSaveState = JSON.parse(saveState);
+		this.solarSystem.bodies.forEach((body, i) => {
+			body.position = new Vector([
+				finalSaveState[i].position.x,
+				finalSaveState[i].position.y,
+			]);
+			body.velocity = new Vector([
+				finalSaveState[i].velocity.x,
+				finalSaveState[i].velocity.y,
+			]);
+		});
+	}
+
+	holdpauses: CelestialBody[] = []
+
 	private keydown(key: KeyboardEvent) {
-		switch(key.key) {
+		switch (key.key) {
 			case " ":
 				this.pause = !this.pause;
-				if (this.pause) Config.TIME_STEP = 0;
-				else Config.TIME_STEP = this.time;	
-			break;
+				if (this.holdpauses) {
+					this.holdpauses.forEach((body) => body.trail = []);
+					this.holdpauses = [];
+				}
+				break;
 			case "ArrowUp":
-				Config.TIME_STEP = this.time += 1;
-			break;
+				Config.ITERATIONS = this.time += 1;
+				break;
 			case "ArrowDown":
-				if(Config.TIME_STEP > 1)
-				Config.TIME_STEP = this.time -= 1;
-			break;
+				if (Config.ITERATIONS > 1) Config.ITERATIONS = this.time -= 1;
+				break;
 		}
 	}
 }

@@ -2,10 +2,7 @@ export class Vector {
 	public x: number;
 	public y: number;
 	constructor(position: [number, number] | Vector) {
-		if (position instanceof Vector) {
-			console.log(position);
-			[this.x, this.y] = [position.x, position.y];
-		}
+		if (position instanceof Vector) [this.x, this.y] = [position.x, position.y];
 		else [this.x, this.y] = position;
 	}
 

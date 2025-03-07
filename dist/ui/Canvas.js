@@ -13,6 +13,7 @@ export class Canvas {
         this.gui = gui;
         this.resize();
         this.gui.camera = this.camera;
+        this.gui.updater = this.updater;
     }
     resize() {
         this.canvas.width = Config.WIDTH;
@@ -23,20 +24,16 @@ export class Canvas {
         return hex.length == 1 ? "0" + hex : hex;
     }
     animate(body) {
-        // Update trail
-        if (Config.TIME_STEP > 0) {
-            body.trail.push([body.position.x, body.position.y]);
-            if (body.trail.length > Config.TRAIL_LENGTH)
-                body.trail.shift();
-        }
         // Draw trail
         if (body.trail.length > 0) {
             this.ctx.lineWidth = body.radius / Config.TRAIL_SIZE;
             for (let i = 0; i < body.trail.length - 1; i++) {
                 this.ctx.beginPath();
-                const alpha = Math.floor((i / body.trail.length) * 255);
+                let alpha = Math.floor((i / body.trail.length) * 2 * 255);
+                if (body.reversalTrail)
+                    alpha = Config.REVERSAL_TRAIL;
                 this.ctx.strokeStyle = body.color + this.toHex(alpha);
-                this.ctx.moveTo(body.trail[i - 1]?.[0] || body.trail[i][0], body.trail[i - 1]?.[1] || body.trail[i][1]);
+                this.ctx.moveTo(body.trail[i][0], body.trail[i][1]);
                 this.ctx.lineTo(body.trail[i + 1][0], body.trail[i + 1][1]);
                 this.ctx.stroke();
             }
@@ -59,6 +56,7 @@ export class Canvas {
         //Draw
         this.ctx.fillStyle = Config.BACKGROUND_COLOR;
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.strokeStyle = 'transparent';
         this.ctx.save();
         //Panning / Scaling
         this.ctx.translate(this.centerX, this.centerY);

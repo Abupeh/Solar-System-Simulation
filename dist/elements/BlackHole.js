@@ -1,20 +1,17 @@
 import { CelestialBody } from "../container/CelestialBody.js";
-export class Planet extends CelestialBody {
-    static name = "Planet";
-    moons = [];
+export class BlackHole extends CelestialBody {
+    static name = "BlackHole";
     constructor(body, types) {
         super(body, types);
-        if (this.hasQuality("Ice")) {
-        }
     }
     static placeConfig = {
-        mass: 1500,
-        radius: 1000,
-        color: "#92ff9c",
+        mass: 9999999,
+        radius: 99999,
+        color: "#010110",
         velocity: [0, 0],
     };
-    static types = ["Dwarf", "Gas", "Ice", "Giant", "Super-Earth", "Terrestrial"];
     static qualities = {};
+    static types = ["Stellar", "Intermediate", "SuperMassive", "Primordial"];
     hasQuality(type) {
         return this.currentTypes.includes(type);
     }
