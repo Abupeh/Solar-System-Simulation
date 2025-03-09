@@ -3,8 +3,9 @@ import { BlackHole } from "../elements/BlackHole";
 import { Star } from "../elements/Star";
 import { Planet } from "../elements/Planet";
 import { Moon } from "../elements/Moon";
-
-
+import { TextBox } from "../ui/elements/TextBox";
+import { Button } from "../ui/elements/Button";
+import { Container } from "../ui/elements/Container";
 export interface CelestialBodyData {
 	ignore?: boolean;
 	name: string;
@@ -20,7 +21,7 @@ export interface SystemData {
 	planets: CelestialBodyData[];
 	moons: CelestialBodyData[];
 }
-
+export type GuiElement = TextBox | Button | Container;
 export type CelestialBodyType = BlackHole | Star | Planet | Moon
 export type CelestialBodyString = "BlackHole" | "Star" | "Planet" | "Moon"
 

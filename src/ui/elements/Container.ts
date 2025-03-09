@@ -1,7 +1,8 @@
 import { GuiConfig } from "../../config/guiconfig.js";
+import { GuiElement } from "../../utils/types.js";
 import { GuiContainer } from "../container/GuiContainer.js";
-import { GuiElement } from "../Gui.js";
 import { Button } from "./Button.js";
+import { TextBox } from "./TextBox.js";
 type Check = () => boolean;
 export class Container extends GuiContainer {
 	constructor(
@@ -16,12 +17,16 @@ export class Container extends GuiContainer {
 
 	configureElements() {
 		this.elements.forEach((element) => {
+			if (element instanceof TextBox && element.sideBox)
+				this.elements.push(element.sideBox);
+		});
+		this.elements.forEach((element) => {
 			element.x += this.x;
 			element.y += this.y;
-			element.containerCallback = () => this.callback()
+			element.containerCallbacks = this.callbacks;
 		});
 	}
-	callback = () => {};
+	callbacks: (() => void)[] = []
 
 	includeFullToggle() {
 		this.elements.forEach((element) => {
@@ -38,7 +43,7 @@ export class Container extends GuiContainer {
 
 	fillStyle = GuiConfig.CONTAINER_COLOR;
 	color(color: string) {
-		this.fillStyle = color
+		this.fillStyle = color;
 		return this;
 	}
 
@@ -64,15 +69,15 @@ export class Container extends GuiContainer {
 			});
 		};
 		setElements();
-		runContainer.callback = setElements;
+		runContainer.callbacks.push(setElements);
 		return this;
 	}
 
 	draw() {
 		if (this.disabled) return;
-		this.ctx.fillStyle = this.fillStyle
+		this.ctx.fillStyle = this.fillStyle;
 		this.ctx.beginPath();
-		this.ctx.roundRect(this.x, this.y, this.width, this.height, 10);
+		this.ctx.roundRect(this.x, this.y, this.width, this.height, GuiConfig.ROUNDNESS);
 		this.ctx.fill();
 
 		this.elements.map((element) => element.draw());

@@ -74,12 +74,13 @@ export class Gui {
                     return;
                 const body = this.placeConfigs[this.selectedPlaceConfig].create(mouse);
                 this.solarSystem.bodies.push(body);
-                this.updater.pause = true;
-                this.updater.holdpauses.push(body);
-                this.updater.updateIterations(body);
             });
         });
         this.addElement(AddBody);
+        const removeBody = new Button(11, 1, 4, 4, "x").onclick(() => {
+            this.updater.holdpauses.forEach((body) => this.solarSystem.bodies.splice(this.solarSystem.bodies.indexOf(body), 1));
+        });
+        this.addElement(removeBody);
         const CameraNext = new Button(11, 6, 4, 4, ">").onclick(() => {
             this.follow.add();
             this.camera.followingBody = this.solarSystem.bodies[this.follow.body];
@@ -96,6 +97,12 @@ export class Gui {
         });
         this.addElement(FollowToggle);
     }
+    selectedPlaceConfigCheck = [
+        () => this.selectedPlaceConfig === "BlackHole",
+        () => this.selectedPlaceConfig === "Star",
+        () => this.selectedPlaceConfig === "Planet",
+        () => this.selectedPlaceConfig === "Moon",
+    ];
     CelestialBodySelector = new Container(0.5, 2, 18, 5, [
         new Button(13.5, 0, 4, 4, "B").onclick(() => {
             this.selectedPlaceConfig = "BlackHole";
@@ -103,28 +110,38 @@ export class Gui {
         new Button(0, 0, 4, 4, "S").onclick(() => {
             this.selectedPlaceConfig = "Star";
         }),
-        new Button(4.5, 0, 4, 4, "P").onclick(() => {
+        new Button(4.5, 0, 4, 4, "P")
+            .onclick(() => {
             this.selectedPlaceConfig = "Planet";
-        }).toggle(),
+        })
+            .toggle(),
         new Button(9, 0, 4, 4, "M").onclick(() => {
             this.selectedPlaceConfig = "Moon";
         }),
-    ]).includeFullToggle().color(GuiConfig.FRONT_CONTAINER_COLOR);
-    CelestialTypeSelector = new Container(0.5, 7, 18, 9, [
-        this.placeConfigs.BlackHole.createContainer(),
-        this.placeConfigs.Star.createContainer(),
-        this.placeConfigs.Planet.createContainer(),
-        this.placeConfigs.Moon.createContainer(),
-    ]).singleEnable([
-        () => this.selectedPlaceConfig === "BlackHole",
-        () => this.selectedPlaceConfig === "Star",
-        () => this.selectedPlaceConfig === "Planet",
-        () => this.selectedPlaceConfig === "Moon",
-    ], this.CelestialBodySelector).color(GuiConfig.FRONT_CONTAINER_COLOR);
+    ])
+        .includeFullToggle()
+        .color(GuiConfig.FRONT_CONTAINER_COLOR);
+    CelestialTypeSelector = new Container(0.5, 8, 18, 9, [
+        this.placeConfigs.BlackHole.createTypes(),
+        this.placeConfigs.Star.createTypes(),
+        this.placeConfigs.Planet.createTypes(),
+        this.placeConfigs.Moon.createTypes(),
+    ])
+        .singleEnable(this.selectedPlaceConfigCheck, this.CelestialBodySelector)
+        .color(GuiConfig.FRONT_CONTAINER_COLOR);
+    CelestialBodyCustomizer = new Container(0.5, 18, 18, 18, [
+        this.placeConfigs.BlackHole.createVariables(),
+        this.placeConfigs.Star.createVariables(),
+        this.placeConfigs.Planet.createVariables(),
+        this.placeConfigs.Moon.createVariables()
+    ])
+        .singleEnable(this.selectedPlaceConfigCheck, this.CelestialBodySelector)
+        .color(GuiConfig.FRONT_CONTAINER_COLOR);
     createContainers() {
         const BodyCustomizer = new Container(80, 12.5, 20, 75, [
             this.CelestialBodySelector,
-            this.CelestialTypeSelector
+            this.CelestialTypeSelector,
+            this.CelestialBodyCustomizer,
         ]);
         this.addElement(BodyCustomizer);
     }

@@ -18,6 +18,6 @@ export class GuiContainer {
     enable() {
         this.disabled = false;
     }
-    containerCallback = () => { };
+    containerCallbacks = [];
     draw() { }
 }

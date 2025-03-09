@@ -1,4 +1,5 @@
-import { GuiConfig } from "../../config/guiconfig";
+import { GuiConfig } from "../../config/guiconfig.js";
+import { TextBox } from "../elements/TextBox.js";
 
 export class GuiContainer {
 	public canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -18,7 +19,7 @@ export class GuiContainer {
 		this.disabled = false;
 	}
 
-	containerCallback = () => {};
+	containerCallbacks: (() => void)[] = []
 
 	draw() {}
 }

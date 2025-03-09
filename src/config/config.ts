@@ -14,7 +14,7 @@ export const Config = {
 	
 	//PLACE CALCULATION
 	MAX_ITERATIONS: 1000,
-	REVERSAL_TRAIL: 150,
+	REVERSAL_TRAIL: 100,
 	
 	//CANVAS
 	WIDTH: window.innerWidth,

@@ -35,7 +35,7 @@ export class Button extends GuiContainer {
             if (this.toggleable)
                 this.toggled = !this.toggled;
             this.callback(event, this.toggled);
-            this.containerCallback();
+            this.containerCallbacks.forEach((callback) => callback());
         }
     }
     onclick(callback) {
@@ -50,11 +50,11 @@ export class Button extends GuiContainer {
         if (this.toggled)
             this.ctx.fillStyle = GuiConfig.TOGGLE_COLOR;
         this.ctx.beginPath();
-        this.ctx.roundRect(this.x, this.y, this.width, this.height, 10);
+        this.ctx.roundRect(this.x, this.y, this.width, this.height, GuiConfig.ROUNDNESS);
         this.ctx.fill();
         // Draw text
-        this.ctx.fillStyle = " #FFFFFF";
-        this.ctx.font = "24px Arial";
+        this.ctx.fillStyle = GuiConfig.TEXT_COLOR;
+        this.ctx.font = `${GuiConfig.FONT_SIZE}px Arial`;
         this.ctx.textAlign = "center";
         this.ctx.textBaseline = "middle";
         this.ctx.fillText(this.text, this.x + this.width / 2, this.y + this.height / 2);
