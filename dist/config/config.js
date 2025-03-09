@@ -1,7 +1,8 @@
 export const Config = {
     //EXPERIMENTS
-    EXPERIMENTS: ["data/solar_system.json", "data/threebodyproblem.json"],
+    EXPERIMENTS: ["data/threebodyproblem", "data/solar_system_test"],
     SELECT: 1,
+    SELECT_TEST: 3,
     //COLORS
     BACKGROUND_COLOR: "#000000",
     SHADOW_BLUR: 0.5,
@@ -9,9 +10,10 @@ export const Config = {
     ITERATIONS: 3,
     TRAIL_LENGTH: 150,
     TRAIL_SIZE: 1.5,
+    MAX_TRAIL_SIZE: 1000,
     //PLACE CALCULATION
-    MAX_ITERATIONS: 1000,
-    REVERSAL_TRAIL: 100,
+    MAX_ITERATIONS: 10000,
+    REVERSAL_TRAIL: 255,
     //CANVAS
     WIDTH: window.innerWidth,
     HEIGHT: window.innerHeight,
@@ -22,5 +24,22 @@ export const Config = {
     FORCE_AMPLITUDE: 50,
     //DWARF
     DWARF_MASS: 0.7,
-    DWARF_RADIUS: 0.7
+    DWARF_RADIUS: 0.7,
+    //GIANT
+    GIANT_MASS: 3.4,
+    GIANT_RADIUS: 3.1,
+    //GAS
+    GAS_MASS: 6.3,
+    //SUPER-EARTH
+    SUPER_EARTH_RATIO: 1.9,
+    //TERRESTRIAL
+    TERRESTRIAL_MASS: 2.4,
+    //NEUTRON STAR
+    NEUTRON_MASS: 33.4,
+    NEUTRON_RADIUS: 0.47,
+    //SUPERGIANT
+    SUPERGIANT_RATIO: 0.0058,
+    //HYPERGIANT
+    HYPERGIANT_MASS: 33.4,
+    HYPERGIANT_RADIUS: 0.47,
 };

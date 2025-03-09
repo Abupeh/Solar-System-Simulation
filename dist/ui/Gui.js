@@ -32,12 +32,11 @@ export class Gui {
             this.clicks = 0;
             this.callback = (mouse) => {
                 this.clicks++;
-                this.destroy();
                 callback(mouse);
             };
         },
         second() {
-            return this.clicks === 0;
+            return this.clicks === 2;
         },
     };
     follow = {
@@ -65,20 +64,27 @@ export class Gui {
         Moon: new PlaceConfig(this, Moon.name, Moon.placeConfig, Moon.qualities, Moon.types),
     };
     selectedPlaceConfig = "Planet";
+    removeBody() {
+        if (this.updater.holdpauses.length == 0)
+            return;
+        this.solarSystem.bodies.pop();
+        this.updater.holdpauses.pop();
+        this.updater.holdpauses.forEach((body) => this.updater.updateIterations(body));
+    }
     createButtons() {
         //Add Celestial Body
         const AddBody = new Button(1, 1, 4, 4, "+").onclick(() => {
             this.canvas.style.cursor = "crosshair";
+            this.global.destroy();
             this.global.onclick((mouse) => {
                 if (!this.global.second())
                     return;
-                const body = this.placeConfigs[this.selectedPlaceConfig].create(mouse);
-                this.solarSystem.bodies.push(body);
+                this.placeConfigs[this.selectedPlaceConfig].create(mouse, this.solarSystem);
             });
         });
         this.addElement(AddBody);
         const removeBody = new Button(11, 1, 4, 4, "x").onclick(() => {
-            this.updater.holdpauses.forEach((body) => this.solarSystem.bodies.splice(this.solarSystem.bodies.indexOf(body), 1));
+            this.removeBody();
         });
         this.addElement(removeBody);
         const CameraNext = new Button(11, 6, 4, 4, ">").onclick(() => {
@@ -96,7 +102,18 @@ export class Gui {
             this.camera.followingBody = this.solarSystem.bodies[this.follow.body];
         });
         this.addElement(FollowToggle);
+        const Download = new Button(94, 1, 4, 4, "D").onclick(() => {
+            const data = this.solarSystem.download();
+        });
+        this.addElement(Download);
     }
+    resetBody = () => {
+        if (this.updater.holdpauses.length > 0) {
+            const position = this.lastBody().position;
+            this.removeBody();
+            this.placeConfigs[this.selectedPlaceConfig].create(position, this.solarSystem);
+        }
+    };
     selectedPlaceConfigCheck = [
         () => this.selectedPlaceConfig === "BlackHole",
         () => this.selectedPlaceConfig === "Star",
@@ -119,21 +136,25 @@ export class Gui {
             this.selectedPlaceConfig = "Moon";
         }),
     ])
+        .onclick(this.resetBody)
         .includeFullToggle()
         .color(GuiConfig.FRONT_CONTAINER_COLOR);
     CelestialTypeSelector = new Container(0.5, 8, 18, 9, [
-        this.placeConfigs.BlackHole.createTypes(),
-        this.placeConfigs.Star.createTypes(),
-        this.placeConfigs.Planet.createTypes(),
-        this.placeConfigs.Moon.createTypes(),
+        this.placeConfigs.BlackHole.createTypes().onclick(this.resetBody),
+        this.placeConfigs.Star.createTypes().onclick(this.resetBody),
+        this.placeConfigs.Planet.createTypes().onclick(this.resetBody),
+        this.placeConfigs.Moon.createTypes().onclick(this.resetBody),
     ])
         .singleEnable(this.selectedPlaceConfigCheck, this.CelestialBodySelector)
         .color(GuiConfig.FRONT_CONTAINER_COLOR);
+    lastBody = () => {
+        return this.updater.holdpauses[this.updater.holdpauses.length - 1];
+    };
     CelestialBodyCustomizer = new Container(0.5, 18, 18, 18, [
         this.placeConfigs.BlackHole.createVariables(),
         this.placeConfigs.Star.createVariables(),
         this.placeConfigs.Planet.createVariables(),
-        this.placeConfigs.Moon.createVariables()
+        this.placeConfigs.Moon.createVariables(),
     ])
         .singleEnable(this.selectedPlaceConfigCheck, this.CelestialBodySelector)
         .color(GuiConfig.FRONT_CONTAINER_COLOR);

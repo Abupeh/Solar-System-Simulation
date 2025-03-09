@@ -12,17 +12,19 @@ export class Updater {
 	public update(
 		bodies: CelestialBody[],
 		ignorePause = false,
-		body?: CelestialBody
+		reversalBody?: CelestialBody
 	) {
 		if (this.pause && !ignorePause) return;
 
+		
 		for (let i = 0; i < Config.ITERATIONS; i++) {
 			bodies.forEach((body) => (body.velocity = body.updateVelocities(bodies)));
 			bodies.forEach((body) => (body.position = body.updatePositions()));
 		}
+		
 		//Update Trail
-		if (body) return body.updateTrail(ignorePause);
-		bodies.forEach((body) => body.updateTrail(ignorePause));
+		if (reversalBody) return reversalBody.updateTrail(ignorePause);
+		bodies.forEach((body) => body.updateTrail());
 	}
 
 	private setupEventListeners(): void {
@@ -30,6 +32,7 @@ export class Updater {
 	}
 
 	public updateIterations(body: CelestialBody) {
+		body.trail = [];
 		const saveState = JSON.stringify(this.solarSystem.bodies);
 		for (let i = 0; i < Config.MAX_ITERATIONS; i++)
 			this.update(this.solarSystem.bodies, true, body);

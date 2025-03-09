@@ -1,6 +1,8 @@
+import { Vector } from "../../components/Vector.js";
 import { GuiConfig } from "../../config/guiconfig.js";
 import { GuiContainer } from "../container/GuiContainer.js";
 
+type TextValue = string | Vector | number;
 export class TextBox extends GuiContainer {
 	isFocused = false;
 	cursorVisible = false;
@@ -15,14 +17,20 @@ export class TextBox extends GuiContainer {
 	) {
 		super(x, y, width, height);
 		this.findTextType(text.toString());
-		if (this.textType == "Vector")
+		if (this.textType == "Vector") {
 			this.sideBox = new TextBox(
 				this.x + GuiConfig.GAPX,
 				this.y,
 				this.width,
 				this.height,
 				this.sideBoxText
-			);
+			).onchange((value) => {
+				this.sideBoxText = value as string
+				this.complete();
+			});
+			this.sideBox.returnFirst = true;
+			this.sideBox.textType = 'Vector'
+		}
 		this.canvas.tabIndex = 0;
 
 		// Event listeners
@@ -33,13 +41,19 @@ export class TextBox extends GuiContainer {
 			this.handleKeyDown(e)
 		);
 	}
+
+	returnFirst = false;
 	textType!: "Number" | "Color" | "Vector";
 	sideBoxText?: string;
 
-    value() {
-        if(this.textType == "Vector") return [this.text, this.sideBox?.text]
-        return this.text
-    }
+	value(): TextValue {
+		if (this.textType == "Vector") {
+			if(this.returnFirst) return Number(this.text)
+			return new Vector([Number(this.text), Number(this.sideBoxText)]);
+		}
+		if (this.textType == "Color") return this.text;
+		return Number(this.text);
+	}
 
 	findTextType(text: string) {
 		if (text.at(0) == "#") return (this.textType = "Color");
@@ -55,9 +69,15 @@ export class TextBox extends GuiContainer {
 
 		this.ctx.fillStyle = GuiConfig.TEXTBOX_COLOR;
 		if (this.isFocused) this.ctx.fillStyle = GuiConfig.TEXTBOX_TOGGLE_COLOR;
-        if(this.textType == "Color") this.ctx.fillStyle = this.text
+		if (this.textType == "Color") this.ctx.fillStyle = this.text;
 		this.ctx.beginPath();
-		this.ctx.roundRect(this.x, this.y, this.width, this.height, GuiConfig.ROUNDNESS);
+		this.ctx.roundRect(
+			this.x,
+			this.y,
+			this.width,
+			this.height,
+			GuiConfig.ROUNDNESS
+		);
 		this.ctx.fill();
 
 		// Draw text
@@ -99,12 +119,17 @@ export class TextBox extends GuiContainer {
 			this.resetCursor();
 			return;
 		}
-		this.inactivate();
+		if (this.isFocused) this.complete();
 	}
 
 	disable() {
 		this.disabled = true;
+		this.sideBox?.disable();
 		this.inactivate();
+	}
+	enable(): void {
+		this.disabled = false;
+		this.sideBox?.enable();
 	}
 
 	inactivate() {
@@ -112,28 +137,59 @@ export class TextBox extends GuiContainer {
 		this.isFocused = false;
 	}
 
+	complete() {
+		this.textToNumber();
+		this.checkValues();
+		this.onchangeCallback(this.value());
+		this.inactivate();
+	}
+
 	handleKeyDown(e: KeyboardEvent) {
 		if (!this.isFocused || this.disabled) return;
 
-        this.textToNumber();
-
-		if (e.key === "Enter") this.inactivate();
+		this.textToNumber();
+		if (e.key === "Enter") this.complete();
 		if (e.key === "Backspace") {
-            if(this.textType == "Color" && this.text.length == 1) return;
+			if (this.textType == "Color" && this.text.length == 1) return;
 			this.text = this.text.slice(0, -1);
-            if(this.text.length == 0) this.text = "0"
+			if (this.text.length == 0) this.text = "0";
 		} else if (e.key.length === 1 && !e.ctrlKey) {
-            const text = this.textType == "Color" ? e.key : e.key.replace(/[^0-9]/g, '');
+			const text = this.textType == "Color" ? e.key : e.key.replace(/[^0-9]/g, "");
 			this.text += text;
 		}
-        this.textToNumber();
+		if(e.key === '-') {
+			if(this.textType !== 'Vector') return
+			this.text = new Number("-" + this.text).toString();
+		}
+		this.textToNumber();
 
 		this.resetCursor();
 	}
 
-    textToNumber() {
-        if(this.textType != "Color") this.text = new Number(this.text).toString();
-    }
+	textToNumber() {
+		if(this.text == "-") this.text = "0";
+		if (this.textType != "Color") this.text = new Number(this.text).toString();
+	}
+
+	checkValues() {
+		if (this.textType == "Color") {
+			this.text = this.text.substring(1);
+			if (this.text.length < 6) this.text = this.text.padEnd(6, "a");
+			if (this.text.length > 6) this.text = this.text.slice(0, 6);
+			this.text = this.text.replaceAll(this.wrongColor(), "a");
+			this.text = "#" + this.text;
+		}
+	}
+	wrongColor() {
+		return new RegExp(/([^0-9a-fA-F])/gi);
+	}
+
+	onchangeCallback: (value: TextValue) => void = () => {};
+
+	onchange(callback: (value: TextValue) => void) {
+		this.onchangeCallback = callback;
+		return this;
+	}
 
 	resetCursor() {
 		this.cursorVisible = true;

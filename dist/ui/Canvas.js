@@ -1,4 +1,5 @@
 import { Config } from "../config/config.js";
+import { BlackHole } from "../elements/BlackHole.js";
 import { Camera } from "./Camera.js";
 export class Canvas {
     updater;
@@ -26,7 +27,10 @@ export class Canvas {
     animate(body) {
         // Draw trail
         if (body.trail.length > 0) {
-            this.ctx.lineWidth = body.radius / Config.TRAIL_SIZE;
+            const trailSize = body.radius / Config.TRAIL_SIZE;
+            this.ctx.lineWidth =
+                trailSize > Config.MAX_TRAIL_SIZE ? Config.MAX_TRAIL_SIZE : trailSize;
+            this.ctx.lineWidth *= (1 / this.camera.zoom) * 0.004;
             for (let i = 0; i < body.trail.length - 1; i++) {
                 this.ctx.beginPath();
                 let alpha = Math.floor((i / body.trail.length) * 2 * 255);
@@ -44,10 +48,15 @@ export class Canvas {
         gradient.addColorStop(1, body.color);
         this.ctx.beginPath();
         this.ctx.arc(body.position.x, body.position.y, body.radius, 0, Math.PI * 2);
+        if (body instanceof BlackHole)
+            this.ctx.shadowColor = "#000000";
         this.ctx.shadowColor = "#ffffff";
         this.ctx.shadowBlur = Config.SHADOW_BLUR;
         this.ctx.fillStyle = gradient;
         this.ctx.fill();
+    }
+    toFollow(body) {
+        this.camera.followingBody = body;
     }
     render(solarSystem) {
         //Update
@@ -56,7 +65,7 @@ export class Canvas {
         //Draw
         this.ctx.fillStyle = Config.BACKGROUND_COLOR;
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.strokeStyle = 'transparent';
+        this.ctx.strokeStyle = "transparent";
         this.ctx.save();
         //Panning / Scaling
         this.ctx.translate(this.centerX, this.centerY);

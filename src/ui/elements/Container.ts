@@ -73,6 +73,11 @@ export class Container extends GuiContainer {
 		return this;
 	}
 
+	onclick(callback: () => void) {
+		this.callbacks.push(callback);
+		return this;
+	}
+
 	draw() {
 		if (this.disabled) return;
 		this.ctx.fillStyle = this.fillStyle;

@@ -8,7 +8,7 @@ export class Updater {
         this.solarSystem = solarSystem;
         this.setupEventListeners();
     }
-    update(bodies, ignorePause = false, body) {
+    update(bodies, ignorePause = false, reversalBody) {
         if (this.pause && !ignorePause)
             return;
         for (let i = 0; i < Config.ITERATIONS; i++) {
@@ -16,14 +16,15 @@ export class Updater {
             bodies.forEach((body) => (body.position = body.updatePositions()));
         }
         //Update Trail
-        if (body)
-            return body.updateTrail(ignorePause);
-        bodies.forEach((body) => body.updateTrail(ignorePause));
+        if (reversalBody)
+            return reversalBody.updateTrail(ignorePause);
+        bodies.forEach((body) => body.updateTrail());
     }
     setupEventListeners() {
         window.addEventListener("keydown", this.keydown.bind(this));
     }
     updateIterations(body) {
+        body.trail = [];
         const saveState = JSON.stringify(this.solarSystem.bodies);
         for (let i = 0; i < Config.MAX_ITERATIONS; i++)
             this.update(this.solarSystem.bodies, true, body);

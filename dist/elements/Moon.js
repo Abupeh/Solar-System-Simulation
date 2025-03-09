@@ -13,6 +13,6 @@ export class Moon extends CelestialBody {
     static qualities = {};
     static types = ["Dwarf"];
     hasQuality(type) {
-        return this.currentTypes.includes(type);
+        return this.types.includes(type);
     }
 }

@@ -2,6 +2,7 @@ import { SolarSystem } from "../components/SolarSystem.js";
 import { Vector } from "../components/Vector.js";
 import { Config } from "../config/config.js";
 import { CelestialBody } from "../container/CelestialBody.js";
+import { BlackHole } from "../elements/BlackHole.js";
 import { Updater } from "../updates/Updater.js";
 import { Camera } from "./Camera.js";
 import { Gui } from "./Gui.js";
@@ -31,11 +32,14 @@ export class Canvas {
 	public animate(body: CelestialBody) {
 		// Draw trail
 		if (body.trail.length > 0) {
-			this.ctx.lineWidth = body.radius / Config.TRAIL_SIZE;
+			const trailSize = body.radius / Config.TRAIL_SIZE;
+			this.ctx.lineWidth =
+				trailSize > Config.MAX_TRAIL_SIZE ? Config.MAX_TRAIL_SIZE : trailSize;
+			this.ctx.lineWidth *= (1 / this.camera.zoom) * 0.004;
 			for (let i = 0; i < body.trail.length - 1; i++) {
 				this.ctx.beginPath();
 				let alpha = Math.floor((i / body.trail.length) * 2 * 255);
-				if(body.reversalTrail) alpha = Config.REVERSAL_TRAIL;
+				if (body.reversalTrail) alpha = Config.REVERSAL_TRAIL;
 				this.ctx.strokeStyle = body.color + this.toHex(alpha);
 				this.ctx.moveTo(body.trail[i][0], body.trail[i][1]);
 				this.ctx.lineTo(body.trail[i + 1][0], body.trail[i + 1][1]);
@@ -57,10 +61,15 @@ export class Canvas {
 
 		this.ctx.beginPath();
 		this.ctx.arc(body.position.x, body.position.y, body.radius, 0, Math.PI * 2);
+		if (body instanceof BlackHole) this.ctx.shadowColor = "#000000";
 		this.ctx.shadowColor = "#ffffff";
 		this.ctx.shadowBlur = Config.SHADOW_BLUR;
 		this.ctx.fillStyle = gradient;
 		this.ctx.fill();
+	}
+
+	toFollow(body: CelestialBody) {
+		this.camera.followingBody = body;
 	}
 
 	render(solarSystem: SolarSystem): void {
@@ -71,8 +80,7 @@ export class Canvas {
 		//Draw
 		this.ctx.fillStyle = Config.BACKGROUND_COLOR;
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		this.ctx.strokeStyle = 'transparent'
-
+		this.ctx.strokeStyle = "transparent";
 
 		this.ctx.save();
 

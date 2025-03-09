@@ -71,6 +71,10 @@ export class Container extends GuiContainer {
         runContainer.callbacks.push(setElements);
         return this;
     }
+    onclick(callback) {
+        this.callbacks.push(callback);
+        return this;
+    }
     draw() {
         if (this.disabled)
             return;

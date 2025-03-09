@@ -1,3 +1,4 @@
+import { Vector } from "../../components/Vector.js";
 import { GuiConfig } from "../../config/guiconfig.js";
 import { BlackHole } from "../../elements/BlackHole.js";
 import { Moon } from "../../elements/Moon.js";
@@ -20,20 +21,28 @@ export class PlaceConfig {
         this.qualities = qualities;
         this.types = types;
     }
-    create(mouse) {
-        this.variables.position = this.gui.camera.getRelativeMouse(mouse);
+    create(mouse, solarSystem) {
+        if (mouse instanceof Vector)
+            this.variables.position = new Vector(mouse);
+        else
+            this.variables.position = this.gui.camera.getRelativeMouse(mouse);
         this.variables.name = this.type + "-" + this.gui.solarSystem.bodies.length;
         let body;
         switch (this.type) {
             case "BlackHole":
                 body = new BlackHole(this.variables, [...this.currentTypes]);
+                break;
             case "Star":
                 body = new Star(this.variables, [...this.currentTypes]);
+                break;
             case "Planet":
                 body = new Planet(this.variables, [...this.currentTypes]);
+                break;
             case "Moon":
                 body = new Moon(this.variables, [...this.currentTypes]);
+                break;
         }
+        solarSystem.bodies.push(body);
         this.iterate(body);
         return body;
     }
@@ -41,7 +50,6 @@ export class PlaceConfig {
         this.gui.updater.pause = true;
         this.gui.updater.holdpauses.push(body);
         this.gui.updater.holdpauses.forEach((body) => {
-            body.trail = [];
             this.gui.updater.updateIterations(body);
         });
     }
@@ -67,7 +75,13 @@ export class PlaceConfig {
         const variables = Object.keys(this.variables).map((key, i) => {
             const x = Math.floor(i / GuiConfig.GAPY) * 4.5;
             const y = 4.5 * i - x * GuiConfig.GAPX;
-            return new TextBox(x + 4, y, GuiConfig.GAPX, GuiConfig.GAPY, this.variables[key]);
+            return new TextBox(x + 4, y, GuiConfig.GAPX, GuiConfig.GAPY, this.variables[key]).onchange((value) => {
+                if (this.gui.lastBody()) {
+                    Object.assign(this.gui.lastBody(), { [key]: value });
+                    this.gui.updater.holdpauses.forEach((body) => this.gui.updater.updateIterations(body));
+                }
+                this.variables[key] = value;
+            });
         });
         return new Container(0, 0, 0, 0, [...variables, ...keys]);
     }

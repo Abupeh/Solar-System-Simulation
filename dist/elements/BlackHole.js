@@ -11,8 +11,13 @@ export class BlackHole extends CelestialBody {
         velocity: [0, 0],
     };
     static qualities = {};
-    static types = ["Stellar", "Intermediate", "SuperMassive", "Primordial"];
+    static types = [
+        "Stellar",
+        "Intermediate",
+        "SuperMassive",
+        "Primordial",
+    ];
     hasQuality(type) {
-        return this.currentTypes.includes(type);
+        return this.types.includes(type);
     }
 }

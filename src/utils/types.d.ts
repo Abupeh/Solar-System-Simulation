@@ -14,23 +14,15 @@ export interface CelestialBodyData {
 	radius: number;
 	position: [number, number] | Vector;
 	velocity: [number, number] | Vector;
+	types: string[]
 }
 
 export interface SystemData {
 	stars: CelestialBodyData[];
 	planets: CelestialBodyData[];
 	moons: CelestialBodyData[];
+	blackholes: CelestialBodyData[];
 }
 export type GuiElement = TextBox | Button | Container;
 export type CelestialBodyType = BlackHole | Star | Planet | Moon
 export type CelestialBodyString = "BlackHole" | "Star" | "Planet" | "Moon"
-
-export interface MoonData {
-	ignore?: boolean;
-	name: string;
-	color: string;
-	mass: number;
-	radius: number;
-	orbitalDistance: [number, number];
-	orbitalVelocity: [number, number];
-}

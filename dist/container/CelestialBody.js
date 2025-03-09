@@ -9,13 +9,12 @@ export class CelestialBody {
     mass;
     radius;
     color;
-    currentTypes = [];
+    types = [];
     trail = [];
     constructor(body, types) {
-        this.currentTypes = types || [];
+        this.types = types || [];
         body.position = new Vector(body.position);
         body.velocity = new Vector(body.velocity);
-        console.log('new body', this.hasQuality('Dwarf'));
         Object.assign(this, body);
         if (this.hasQuality("Dwarf")) {
             this.radius *= Config.DWARF_RADIUS;
@@ -23,7 +22,7 @@ export class CelestialBody {
         }
     }
     hasQuality(type) {
-        return this.currentTypes.includes(type);
+        return this.types.includes(type);
     }
     updateVelocities(bodies) {
         return Physics.applyGravitationalForces(this, bodies);

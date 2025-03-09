@@ -1,10 +1,12 @@
 import { SolarSystem } from "../../components/SolarSystem.js";
+import { Vector } from "../../components/Vector.js";
 import { GuiConfig } from "../../config/guiconfig.js";
 import { CelestialBody } from "../../container/CelestialBody.js";
 import { BlackHole } from "../../elements/BlackHole.js";
 import { Moon } from "../../elements/Moon.js";
 import { Planet } from "../../elements/Planet.js";
 import { Star } from "../../elements/Star.js";
+import { Updater } from "../../updates/Updater.js";
 import {
 	CelestialBodyData,
 	CelestialBodyString,
@@ -21,32 +23,40 @@ import { Gui } from "../Gui.js";
 export class PlaceConfig<
 	T extends CelestialBodyString,
 	V extends CelestialBodyData,
-	Q
+	Q,
+	Types extends readonly string[]
 > {
 	constructor(
 		public gui: Gui,
 		public type: T,
 		public variables: V,
 		public qualities: Q,
-		public types: string[]
+		public types: Types
 	) {}
 
-	create(mouse: MouseEvent) {
-		this.variables.position = this.gui.camera.getRelativeMouse(mouse);
+	create(mouse: MouseEvent | Vector, solarSystem: SolarSystem) {
+		if (mouse instanceof Vector) this.variables.position = new Vector(mouse);
+		else this.variables.position = this.gui.camera.getRelativeMouse(mouse);
 		this.variables.name = this.type + "-" + this.gui.solarSystem.bodies.length;
 		let body: CelestialBodyType;
 		switch (this.type) {
 			case "BlackHole":
 				body = new BlackHole(this.variables, [...this.currentTypes]);
+				break;
 			case "Star":
 				body = new Star(this.variables, [...this.currentTypes]);
+				break;
+
 			case "Planet":
 				body = new Planet(this.variables, [...this.currentTypes]);
+				break;
+
 			case "Moon":
 				body = new Moon(this.variables, [...this.currentTypes]);
+				break;
 		}
-
-		this.iterate(body)
+		solarSystem.bodies.push(body);
+		this.iterate(body);
 		return body;
 	}
 
@@ -54,7 +64,6 @@ export class PlaceConfig<
 		this.gui.updater.pause = true;
 		this.gui.updater.holdpauses.push(body);
 		this.gui.updater.holdpauses.forEach((body) => {
-			body.trail = [];
 			this.gui.updater.updateIterations(body);
 		});
 	}
@@ -98,7 +107,13 @@ export class PlaceConfig<
 				GuiConfig.GAPX,
 				GuiConfig.GAPY,
 				this.variables[key as keyof V] as string
-			);
+			).onchange((value) => {
+				if (this.gui.lastBody()) {
+					Object.assign(this.gui.lastBody(), { [key as keyof V]: value });
+					this.gui.updater.holdpauses.forEach((body) => this.gui.updater.updateIterations(body));
+				}
+				this.variables[key as keyof V] = value as V[keyof V];
+			});
 		});
 
 		return new Container(0, 0, 0, 0, [...variables, ...keys] as GuiElement[]);

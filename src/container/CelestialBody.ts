@@ -10,26 +10,25 @@ export abstract class CelestialBody {
 	public mass!: number;
 	public radius!: number;
 	public color!: string;
-	public currentTypes: string[] = []
+	public types: string[] = [];
 
 	public trail: number[][] = [];
 
 	constructor(body: CelestialBodyData, types?: string[]) {
-		this.currentTypes = types || [];
+		this.types = types || [];
 		body.position = new Vector(body.position);
 		body.velocity = new Vector(body.velocity);
-		console.log('new body', this.hasQuality('Dwarf'))
-		
+
 		Object.assign(this, body);
-		
-		if(this.hasQuality("Dwarf")) {
-			this.radius *= Config.DWARF_RADIUS
-			this.mass *= Config.DWARF_MASS
+
+		if (this.hasQuality("Dwarf")) {
+			this.radius *= Config.DWARF_RADIUS;
+			this.mass *= Config.DWARF_MASS;
 		}
 	}
 
 	hasQuality(type: string) {
-		return this.currentTypes.includes(type)
+		return this.types.includes(type);
 	}
 	updateVelocities(bodies: CelestialBody[]) {
 		return Physics.applyGravitationalForces(this, bodies);
