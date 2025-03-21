@@ -6,6 +6,7 @@ export const GuiConfig = {
     FRONT_CONTAINER_COLOR: "#838383",
     GAPX: 4,
     GAPY: 4,
+    Y_SPLIT: 1,
     ROUNDNESS: 10,
     //TEXTBOX
     FONT_SIZE: 12,

@@ -1,0 +1,15 @@
+{
+    "stars": [
+        {
+			"name": "Star-0",
+			"mass": 30000,
+			"radius": 6000,
+			"color": "#FFeAA0",
+			"position": [0, 0],
+			"velocity": [10, 0]
+		}
+    ],
+    "planets": [],
+    "moons": [],
+    "blackholes": []
+}

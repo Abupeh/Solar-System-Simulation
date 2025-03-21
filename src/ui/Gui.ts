@@ -75,7 +75,7 @@ export class Gui {
 			Star.placeConfig,
 			Star.qualities,
 			Star.types
-		), 
+		),
 		Planet: new PlaceConfig(
 			this,
 			Planet.name,
@@ -123,12 +123,16 @@ export class Gui {
 		const CameraNext = new Button(11, 6, 4, 4, ">").onclick(() => {
 			this.follow.add();
 			this.camera.followingBody = this.solarSystem.bodies[this.follow.body];
+			if (this.camera.followingBody && this.camera.referenceMode)
+				this.camera.followingBody.trail = [];
 		});
 		this.addElement(CameraNext);
 
 		const CameraBack = new Button(1, 6, 4, 4, "<").onclick(() => {
 			this.follow.subtract();
 			this.camera.followingBody = this.solarSystem.bodies[this.follow.body];
+			if (this.camera.followingBody && this.camera.referenceMode)
+				this.camera.followingBody.trail = [];
 		});
 		this.addElement(CameraBack);
 
@@ -138,9 +142,18 @@ export class Gui {
 		});
 		this.addElement(FollowToggle);
 
+		const ReferenceToggle = new Button(6, 11, 4, 4, "R").onclick(() => {
+			if (this.camera.followingBody) this.camera.followingBody.trail = [];
+			this.camera.referenceMode = !this.camera.referenceMode;
+			this.updater.holdpauses.forEach((body) =>
+				this.updater.updateIterations(body)
+			);
+		});
+		this.addElement(ReferenceToggle);
+
 		const Download = new Button(94, 1, 4, 4, "D").onclick(() => {
 			const data = this.solarSystem.download();
-		})
+		});
 		this.addElement(Download);
 	}
 
@@ -153,7 +166,7 @@ export class Gui {
 				this.solarSystem
 			);
 		}
-	}
+	};
 
 	private selectedPlaceConfigCheck = [
 		() => this.selectedPlaceConfig === "BlackHole",
@@ -194,7 +207,7 @@ export class Gui {
 		return this.updater.holdpauses[this.updater.holdpauses.length - 1];
 	};
 
-	CelestialBodyCustomizer = new Container(0.5, 18, 18, 18, [
+	CelestialBodyCustomizer = new Container(0.5, 18, 18, 23, [
 		this.placeConfigs.BlackHole.createVariables(),
 		this.placeConfigs.Star.createVariables(),
 		this.placeConfigs.Planet.createVariables(),

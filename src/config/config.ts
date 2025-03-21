@@ -1,8 +1,8 @@
 export const Config = {
 	//EXPERIMENTS
-	EXPERIMENTS: ["data/threebodyproblem", "data/solar_system_test"],
-	SELECT: 1,
-	SELECT_TEST: 3,
+	EXPERIMENTS: ["data/threebodyproblem", "data/solar_system_test", "data/empty_system"],
+	SELECT: 2,
+	SELECT_TEST: 7,
 
 	//COLORS
 	BACKGROUND_COLOR: "#000000",
@@ -15,7 +15,7 @@ export const Config = {
 	MAX_TRAIL_SIZE: 1000,
 
 	//PLACE CALCULATION
-	MAX_ITERATIONS: 10000,
+	MAX_ITERATIONS: 3000,
 	REVERSAL_TRAIL: 255,
 
 	//CANVAS

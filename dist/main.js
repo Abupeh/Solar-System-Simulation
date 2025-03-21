@@ -1,14 +1,9 @@
-import { Canvas } from "./ui/Canvas.js";
-import { SolarSystem } from "./components/SolarSystem.js";
-import { Vector } from "./components/Vector.js";
-import { Updater } from "./updates/Updater.js";
-import { Config } from "./config/config.js";
-import { Gui } from "./ui/Gui.js";
-const solarSystem = new SolarSystem(new Vector([0, 0]));
-if (Config.SELECT_TEST > 0)
-    await solarSystem.importExperiment("tests/test" + Config.SELECT_TEST);
-else
-    await solarSystem.importExperiment(Config.EXPERIMENTS[Config.SELECT]);
-const canvas = new Canvas(new Updater(solarSystem), new Gui(solarSystem));
-canvas.render(solarSystem);
-canvas.toFollow(solarSystem.selectBody("Star-0"));
+import { Universe } from "./core/Universe.js";
+import { Global } from "./global/Global.js";
+const universe = new Universe("Solar-System", "-B1.1$consice");
+await universe.import("test7", "tests");
+const global = new Global(universe);
+global.render();
+setInterval(() => {
+    console.log(universe.astroObjects[universe.astroObjects.length - 1]);
+}, 10000);

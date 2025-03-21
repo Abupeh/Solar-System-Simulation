@@ -34,11 +34,14 @@ export class PlaceConfig<
 		public types: Types
 	) {}
 
+	positionTextBox!: TextBox;
+
 	create(mouse: MouseEvent | Vector, solarSystem: SolarSystem) {
 		if (mouse instanceof Vector) this.variables.position = new Vector(mouse);
 		else this.variables.position = this.gui.camera.getRelativeMouse(mouse);
+
 		this.variables.name = this.type + "-" + this.gui.solarSystem.bodies.length;
-		let body: CelestialBodyType;
+		let body!: CelestialBodyType;
 		switch (this.type) {
 			case "BlackHole":
 				body = new BlackHole(this.variables, [...this.currentTypes]);
@@ -55,6 +58,12 @@ export class PlaceConfig<
 				body = new Moon(this.variables, [...this.currentTypes]);
 				break;
 		}
+		this.positionTextBox.text = body.position.x.toString();
+		if (this.positionTextBox.sideBox)
+			this.positionTextBox.sideBox.text = body.position.y.toString();
+		this.positionTextBox.textToNumber(true);
+		if (body.color.length > 7) body.color = body.color.slice(0, 7);
+
 		solarSystem.bodies.push(body);
 		this.iterate(body);
 		return body;
@@ -86,8 +95,9 @@ export class PlaceConfig<
 	}
 
 	createVariables() {
+		this.variables.position = [0, 0];
 		const keys = Object.keys(this.variables).map((key, i) => {
-			const x = Math.floor(i / GuiConfig.GAPY) * 4.5;
+			const x = Math.floor(i / (GuiConfig.GAPY + GuiConfig.Y_SPLIT)) * 4.5;
 			const y = 4.5 * i - x * GuiConfig.GAPX;
 			return new TextDisplay(
 				x,
@@ -99,10 +109,10 @@ export class PlaceConfig<
 		});
 
 		const variables = Object.keys(this.variables).map((key, i) => {
-			const x = Math.floor(i / GuiConfig.GAPY) * 4.5;
+			const x = Math.floor(i / (GuiConfig.GAPY + GuiConfig.Y_SPLIT)) * 4.5;
 			const y = 4.5 * i - x * GuiConfig.GAPX;
-			return new TextBox(
-				x + 4,
+			const textbox = new TextBox(
+				x + GuiConfig.GAPX,
 				y,
 				GuiConfig.GAPX,
 				GuiConfig.GAPY,
@@ -110,12 +120,16 @@ export class PlaceConfig<
 			).onchange((value) => {
 				if (this.gui.lastBody()) {
 					Object.assign(this.gui.lastBody(), { [key as keyof V]: value });
-					this.gui.updater.holdpauses.forEach((body) => this.gui.updater.updateIterations(body));
+					this.gui.updater.holdpauses.forEach((body) =>
+						this.gui.updater.updateIterations(body)
+					);
 				}
 				this.variables[key as keyof V] = value as V[keyof V];
 			});
+			if (key == "position") this.positionTextBox = textbox;
+			return textbox;
 		});
 
-		return new Container(0, 0, 0, 0, [...variables, ...keys] as GuiElement[]);
+		return new Container(0, 0.5, 0, 0, [...variables, ...keys] as GuiElement[]);
 	}
 }

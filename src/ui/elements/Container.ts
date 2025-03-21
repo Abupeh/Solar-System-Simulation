@@ -41,6 +41,12 @@ export class Container extends GuiContainer {
 		return this;
 	}
 
+	updateOn(container: Container) {
+		container.containerCallbacks.push(() => {
+
+		})
+	}
+
 	fillStyle = GuiConfig.CONTAINER_COLOR;
 	color(color: string) {
 		this.fillStyle = color;

@@ -13,7 +13,7 @@ export class SolarSystem {
 	constructor(public position: Vector = new Vector([0, 0])) {}
 
 	async importExperiment(json: string) {
-		const response = await fetch(json + '.json');
+		const response = await fetch(json + ".json");
 		const data = (await response.json()) as SystemData;
 		this.importBodies(data);
 		return this;
@@ -36,13 +36,12 @@ export class SolarSystem {
 			);
 	}
 
-
 	toStringType(body: CelestialBody) {
 		if (body instanceof Star) return "stars";
 		if (body instanceof Planet) return "planets";
 		if (body instanceof Moon) return "moons";
 		if (body instanceof BlackHole) return "blackholes";
-		return "planets"
+		return "planets";
 	}
 	collectData() {
 		const data: SystemData = {
@@ -50,7 +49,7 @@ export class SolarSystem {
 			planets: [],
 			moons: [],
 			blackholes: [],
-		}
+		};
 		this.bodies.forEach(
 			({ name, color, mass, radius, types, position, velocity }, i) => {
 				data[this.toStringType(this.bodies[i])].push({
@@ -61,7 +60,7 @@ export class SolarSystem {
 					types,
 					position: [position.x, position.y],
 					velocity: [velocity.x, velocity.y],
-				})
+				});
 			}
 		);
 		return data;

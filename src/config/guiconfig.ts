@@ -8,6 +8,7 @@ export const GuiConfig = {
 
 	GAPX: 4,
 	GAPY: 4,
+	Y_SPLIT: 1,
 	ROUNDNESS: 10,
 
 	//TEXTBOX

@@ -21,17 +21,22 @@ export class Camera {
 			active: false,
 		};
 	}
+	referenceMode = false;
 
-	
 	public followingBody: CelestialBody | null = null;
 	public follow() {
-		if(!this.followingBody) return;
+		if (!this.followingBody) return;
 		this.position = this.drag.offset.subtract(this.followingBody.position);
 	}
 
 	public getRelativeMouse(evt: MouseEvent) {
 		const following = this.followingBody?.position || this.position.scale(-1);
 		return following.add(this.getMouse(evt).subtract(this.getCenter()));
+	}
+
+	public getRelativePos(pos: Vector) {
+		const following = this.followingBody?.position || this.position.scale(-1);
+		return following.add(pos.subtract(this.getCenter()));
 	}
 
 	public getOffset() {

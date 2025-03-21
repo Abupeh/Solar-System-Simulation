@@ -1,9 +1,9 @@
 {
-  "exclude": ["source"],
+  "exclude": ["src"],
   "compilerOptions": {
 	"module": "esnext",
     "target": "ESNext",
-    "rootDir": "./src", 
+    "rootDir": "./public", 
     "moduleResolution": "node",  
     "outDir": "./dist",    
     "esModuleInterop": true,

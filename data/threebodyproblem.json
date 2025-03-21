@@ -1,6 +1,6 @@
 {
 	"stars": [],
-	"planetsx": [
+	"planets": [
 		{
 			"name": "Dione",
 			"color": " #F39E60",
@@ -26,7 +26,6 @@
 			"velocity": [-0.1, -0.2]
 		}
 	],
-	"planets": [],
 	"moons": [],
 	"blackholes": []
 }

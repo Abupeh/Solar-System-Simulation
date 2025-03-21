@@ -29,6 +29,7 @@ export class Canvas {
 		let hex = rgb.toString(16);
 		return hex.length == 1 ? "0" + hex : hex;
 	}
+
 	public animate(body: CelestialBody) {
 		// Draw trail
 		if (body.trail.length > 0) {
@@ -74,6 +75,8 @@ export class Canvas {
 
 	render(solarSystem: SolarSystem): void {
 		//Update
+		this.updater.followingBody = this.camera.followingBody;
+		this.updater.referenceMode = this.camera.referenceMode;
 		this.updater.update(solarSystem.bodies);
 		this.camera.follow();
 

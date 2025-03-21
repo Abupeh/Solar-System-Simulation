@@ -20,26 +20,27 @@ export class TextBox extends GuiContainer {
         this.text = text;
         this.findTextType(text.toString());
         if (this.textType == "Vector") {
-            this.sideBox = new TextBox(this.x + GuiConfig.GAPX, this.y, this.width, this.height, this.sideBoxText).onchange((value) => {
-                this.sideBoxText = value;
+            this.sideBox = new TextBox(this.x + GuiConfig.GAPX, this.y, this.width, this.height, this.sideBoxTemp).onchange((value) => {
+                this.sideBox.text = value;
                 this.complete();
             });
             this.sideBox.returnFirst = true;
-            this.sideBox.textType = 'Vector';
+            this.sideBox.textType = "Vector";
         }
         this.canvas.tabIndex = 0;
         // Event listeners
         this.canvas.addEventListener("mousedown", (e) => this.handleClick(e));
         this.canvas.addEventListener("keydown", (e) => this.handleKeyDown(e));
+        this.checkValues();
     }
+    sideBoxTemp = "";
     returnFirst = false;
     textType;
-    sideBoxText;
     value() {
         if (this.textType == "Vector") {
             if (this.returnFirst)
                 return Number(this.text);
-            return new Vector([Number(this.text), Number(this.sideBoxText)]);
+            return new Vector([Number(this.text), Number(this.sideBox?.text)]);
         }
         if (this.textType == "Color")
             return this.text;
@@ -49,7 +50,7 @@ export class TextBox extends GuiContainer {
         if (text.at(0) == "#")
             return (this.textType = "Color");
         if (text.includes(",")) {
-            [this.text, this.sideBoxText] = text.split(",");
+            [this.text, this.sideBoxTemp] = text.split(",");
             return (this.textType = "Vector");
         }
         this.textType = "Number";
@@ -131,19 +132,21 @@ export class TextBox extends GuiContainer {
             const text = this.textType == "Color" ? e.key : e.key.replace(/[^0-9]/g, "");
             this.text += text;
         }
-        if (e.key === '-') {
-            if (this.textType !== 'Vector')
+        if (e.key === "-") {
+            if (this.textType !== "Vector")
                 return;
-            this.text = new Number("-" + this.text).toString();
+            this.text = (new Number(this.text) * -1).toString();
         }
         this.textToNumber();
         this.resetCursor();
     }
-    textToNumber() {
+    textToNumber(floor = false) {
         if (this.text == "-")
             this.text = "0";
         if (this.textType != "Color")
-            this.text = new Number(this.text).toString();
+            this.text = (floor ? Math.floor(new Number(this.text)) : new Number(this.text)).toString();
+        if (this.sideBox)
+            this.sideBox.textToNumber(floor);
     }
     checkValues() {
         if (this.textType == "Color") {

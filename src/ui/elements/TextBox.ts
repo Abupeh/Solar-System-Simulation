@@ -23,13 +23,13 @@ export class TextBox extends GuiContainer {
 				this.y,
 				this.width,
 				this.height,
-				this.sideBoxText
+				this.sideBoxTemp
 			).onchange((value) => {
-				this.sideBoxText = value as string
+				this.sideBox!.text = value as string;
 				this.complete();
 			});
 			this.sideBox.returnFirst = true;
-			this.sideBox.textType = 'Vector'
+			this.sideBox.textType = "Vector";
 		}
 		this.canvas.tabIndex = 0;
 
@@ -40,16 +40,18 @@ export class TextBox extends GuiContainer {
 		this.canvas.addEventListener("keydown", (e: KeyboardEvent) =>
 			this.handleKeyDown(e)
 		);
+		this.checkValues();
 	}
+
+	private sideBoxTemp = "";
 
 	returnFirst = false;
 	textType!: "Number" | "Color" | "Vector";
-	sideBoxText?: string;
 
 	value(): TextValue {
 		if (this.textType == "Vector") {
-			if(this.returnFirst) return Number(this.text)
-			return new Vector([Number(this.text), Number(this.sideBoxText)]);
+			if (this.returnFirst) return Number(this.text);
+			return new Vector([Number(this.text), Number(this.sideBox?.text)]);
 		}
 		if (this.textType == "Color") return this.text;
 		return Number(this.text);
@@ -58,7 +60,7 @@ export class TextBox extends GuiContainer {
 	findTextType(text: string) {
 		if (text.at(0) == "#") return (this.textType = "Color");
 		if (text.includes(",")) {
-			[this.text, this.sideBoxText] = text.split(",");
+			[this.text, this.sideBoxTemp] = text.split(",");
 			return (this.textType = "Vector");
 		}
 		this.textType = "Number";
@@ -157,18 +159,23 @@ export class TextBox extends GuiContainer {
 			const text = this.textType == "Color" ? e.key : e.key.replace(/[^0-9]/g, "");
 			this.text += text;
 		}
-		if(e.key === '-') {
-			if(this.textType !== 'Vector') return
-			this.text = new Number("-" + this.text).toString();
+		if (e.key === "-") {
+			if (this.textType !== "Vector") return;
+			this.text = ((new Number(this.text) as number) * -1).toString();
 		}
 		this.textToNumber();
 
 		this.resetCursor();
 	}
 
-	textToNumber() {
-		if(this.text == "-") this.text = "0";
-		if (this.textType != "Color") this.text = new Number(this.text).toString();
+	textToNumber(floor = false) {
+		if (this.text == "-") this.text = "0";
+		if (this.textType != "Color")
+			this.text = (
+				floor ? Math.floor(new Number(this.text) as number) : new Number(this.text)
+			).toString();
+
+		if (this.sideBox) this.sideBox.textToNumber(floor);
 	}
 
 	checkValues() {
