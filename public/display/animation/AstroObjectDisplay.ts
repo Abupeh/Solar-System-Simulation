@@ -1,4 +1,6 @@
 import { AstroObject } from "../../components/astro/AstroObject.js";
+import { AstroSet } from "../../components/class/AstroSet.js";
+import { Planet } from "../../components/templates/Planet.js";
 import { Global } from "../../global/Global.js";
 
 interface AstroDisplayProperties {
@@ -6,6 +8,7 @@ interface AstroDisplayProperties {
 	y: number;
 	radius: number;
 	color: string;
+	set: AstroSet<any>;
 }
 export class AstroObjectDisplay {
 	static GRADIENT_FADE = "ff";
@@ -40,12 +43,13 @@ export class AstroObjectDisplay {
 		return gradient;
 	}
 	renderBody(
-		{ x, y, radius }: AstroDisplayProperties,
+		{ x, y, radius, set }: AstroDisplayProperties,
 		gradient: CanvasGradient
 	) {
 		this.global.ctx.arc(x, y, radius, 0, 2 * Math.PI);
 		this.global.ctx.shadowColor = AstroObjectDisplay.SHADOW_COLOR;
 		this.global.ctx.shadowBlur = AstroObjectDisplay.SHADOW_BLUR;
 		this.global.ctx.fillStyle = gradient;
+		if(set instanceof Planet && set.variables.rings.color === '#dddddd') this.global.ctx.fillStyle = '#ffffff'
 	}
 }

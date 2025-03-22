@@ -4,6 +4,7 @@ import { Vector } from "../../modules/Vector.js";
 export class Camera {
 	static INITIAL_ZOOM = 0.003;
 	static SCROLL_SPEED = 1.2;
+	static ENABLE_SCROLL = true;
 	static DRAG_BUTTON = 1;
 
 	private eventListeners: [Function, any][] = [
@@ -52,16 +53,22 @@ export class Camera {
 	}
 	public getMouse(x: number, y: number): [number, number] {
 		const [offsetX, offsetY] = this.offset();
-		
+
 		return [
-			(x - this.global.centerWidth) / this.zoom - offsetX - this.global.tracker.followingX(),
-			(y - this.global.centerHeight) / this.zoom - offsetY - this.global.tracker.followingY(),
+			(x - this.global.centerWidth) / this.zoom -
+				offsetX -
+				this.global.tracker.followingX(),
+			(y - this.global.centerHeight) / this.zoom -
+				offsetY -
+				this.global.tracker.followingY(),
 		];
 	}
 
 	private scroll(event: WheelEvent) {
 		if (this.drag.active) return;
-		this.zoom *= event.deltaY > 0 ? 1 / Camera.SCROLL_SPEED : Camera.SCROLL_SPEED;
+		if (Camera.ENABLE_SCROLL)
+			this.zoom *=
+				event.deltaY > 0 ? 1 / Camera.SCROLL_SPEED : Camera.SCROLL_SPEED;
 	}
 
 	private mouseDown({ clientX, clientY, button }: MouseEvent) {

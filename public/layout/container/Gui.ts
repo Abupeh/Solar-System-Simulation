@@ -35,6 +35,7 @@ export class Gui {
 			if (controller instanceof TextBox) this.GuiTextBox.scale(controller);
 		});
 	}
+
 	render({ controllers } = this.global.content) {
 		controllers.forEach((controller) => {
 			if (controller instanceof Button) this.GuiButton.draw(controller);

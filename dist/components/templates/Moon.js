@@ -12,7 +12,8 @@ export class Moon extends AstroSet {
         habitabilityPercentage: 0,
     };
     static defaults = {};
-    constructor(variables = Moon.details) {
+    defaults = Moon.defaults;
+    constructor(variables = structuredClone(Moon.details)) {
         super(variables);
     }
     update() {

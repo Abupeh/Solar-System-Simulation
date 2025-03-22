@@ -5,7 +5,9 @@ import { Container } from "../interfaces/Container.js";
 import { ToggleButton } from "../controllers/ToggleButton.js";
 import { Controller } from "../interfaces/Controller.js";
 import { TextBox, TextBoxType } from "../controllers/TextBox.js";
-
+import { AstroObject } from "../../components/astro/AstroObject.js";
+import { Vector } from "../../modules/Vector.js";
+type Variables = AstroSet<any>["variables"];
 export class PlaceDisplay {
 	static INITIAL_X = 80;
 	static INITIAL_Y = 12;
@@ -18,6 +20,8 @@ export class PlaceDisplay {
 
 	static VARIABLE_X = 80;
 	static VARIABLE_Y = 19;
+	static VARIABLE_START = 13;
+	static START = 2.2;
 
 	static VARIABLE_SEPERATION_Y = 4.5;
 	static ARRAY_SEPERATION_Y = 0.3;
@@ -34,6 +38,13 @@ export class PlaceDisplay {
 	static y = 0;
 	static amount = 0;
 
+	static SCROLL_SPEED = -23;
+
+	static cutoffX = this.sideX;
+	static cutoffY = this.INITIAL_Y + this.VARIABLE_SEPERATION_Y;
+	static cutoffWidth = this.sideWidth;
+	static cutoffHeight = this.sideHeight - this.VARIABLE_SEPERATION_Y * 2;
+
 	static pureObject(x: any) {
 		return typeof x === "object" && !Array.isArray(x) && x !== null;
 	}
@@ -41,40 +52,45 @@ export class PlaceDisplay {
 	static createQuality(
 		global: Global,
 		key: string,
-		set: AstroSet<any>
+		variables: () => Variables,
+		handleProperties = false,
+		reset = false,
 	): Controller {
 		this.y++;
-		if (set.variables[key] instanceof Array) {
+		const vars = reset ? () => variables().set.variables : () => variables();
+
+		if (vars()[key] instanceof Array) {
 			this.x = 0;
-			return this.handleArray(global, key, set);
-		} else if (this.pureObject(set.variables[key])) {
-			return this.handleVariables(global, set.variables[key]);
-		} else if (typeof set.variables[key] == "boolean") {
+			return this.handleArray(global, key, vars());
+		} else if (this.pureObject(vars()[key])) {
+			if (handleProperties) return this.handleProperties(global, () => vars()[key]);
+			return this.handleVariables(global, () => vars()[key]);
+		} else if (typeof vars()[key] == "boolean") {
 			this.x = 1;
 			return this.handleBool(global, key, 1).onClick(() => {
-				set.variables[key] = !set.variables[key];
+				vars()[key] = !vars()[key];
 			});
 		}
 		this.x = 0;
-		return this.handleString(global, key, set).onChange((value) => {
-			set.variables[key] = value;
+		return this.handleString(global, key, vars()).onChange((value) => {
+			vars()[key] = value;
 		});
 	}
 
-	static handleArray(global: Global, key: string, set: AstroSet<any>) {
+	static handleArray(global: Global, key: string, variables: Variables) {
 		const buttons = [];
-		const parts = [...set.variables[key]];
-		set.variables[key] = [];
+		const parts = [...variables[key]];
+		variables[key] = [];
 
 		if (!this.SetTypes.includes(key)) this.y += this.ARRAY_SELECT_Y;
 
-		for (const part of parts) {
+		for (let i = 0; i < parts.length; i++) {
 			this.x++;
-			const selectButton = this.handleBool(global, part, parts.length).onClick(
+			const selectButton = this.handleBool(global, parts[i], parts.length).onClick(
 				() => {
-					if (set.variables[key].includes(part))
-						return set.variables[key].splice(set.variables[key].indexOf(part), 1);
-					set.variables[key].push(part);
+					if (variables[key].includes(parts[i]))
+						return variables[key].splice(variables[key].indexOf(parts[i]), 1);
+					variables[key].push(parts[i]);
 				}
 			);
 			buttons.push(selectButton);
@@ -94,20 +110,48 @@ export class PlaceDisplay {
 		return container;
 	}
 
-	static handleVariables(global: Global, set: AstroSet<any>, reset = false) {
+	static handleVariables(
+		global: Global,
+		astroObject: () => AstroObject,
+		reset = false
+	) {
 		if (reset) {
 			this.x = 0;
-			this.y = 0;
+			this.y = this.VARIABLE_START;
 		}
 		this.y--;
 		const controllers = [];
-		const object =
-			"variables" in set
-				? set
-				: ((set as AstroSet<any>).variables = set as AstroSet<any>);
-		for (const key in object.variables) {
+		const vars = reset ? () => astroObject().set.variables : () => astroObject();
+		for (const key in vars()) {
 			if (key == "variables") continue;
-			const controller = this.createQuality(global, key, object);
+			const controller = this.createQuality(global, key, astroObject, false, reset);
+			controllers.push(controller);
+		}
+		return new Container(global, 0, 0, 0, 0).contain(controllers);
+	}
+
+	static handleProperties(
+		global: Global,
+		astroObject: () => AstroObject,
+		reset = false
+	) {
+		if (reset) {
+			this.y = -this.START;
+		}
+		const controllers = [];
+		for (const key in astroObject()) {
+			if (key == "set" || key == "trail") continue;
+			if (key == "position" || key == "velocity") {
+				this.y -= 0.5;
+				const controller = this.createQuality(global, key, astroObject, true);
+				controllers.push(controller);
+			}
+		}
+
+		for (const key in astroObject()) {
+			if (key == "set" || key == "trail") continue;
+			if (key == "position" || key == "velocity") continue;
+			const controller = this.createQuality(global, key, astroObject, true);
 			controllers.push(controller);
 		}
 		return new Container(global, 0, 0, 0, 0).contain(controllers);
@@ -135,18 +179,18 @@ export class PlaceDisplay {
 		return replacedText.charAt(0).toUpperCase() + replacedText.slice(1);
 	}
 
-	static handleString(global: Global, key: string, set: AstroSet<any>) {
+	static handleString(global: Global, key: string, variables: Variables) {
 		let type: TextBoxType = "string";
-		if (typeof set.variables[key] == "number") type = "number";
-		else if (set.variables[key].startsWith("#")) type = "color";
+		if (typeof variables[key] == "number") type = "number";
+		else if (variables[key].startsWith("#")) type = "color";
 
 		return new TextBox(
 			global,
-			this.VARIABLE_X + this.X_SEPERATION * (this.x + 1) + this.WIDTH*1.5,
+			this.VARIABLE_X + this.X_SEPERATION * (this.x + 1) + this.WIDTH * 1.5,
 			this.VARIABLE_Y + this.VARIABLE_SEPERATION_Y * this.y,
 			this.WIDTH * 2,
 			this.HEIGHT,
-			set.variables[key],
+			variables[key],
 			this.ToDisplay(key),
 			type
 		);

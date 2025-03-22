@@ -5,11 +5,11 @@ import { BlackHole } from "../templates/BlackHole.js";
 import { Astroid } from "../templates/Asteroid.js";
 // type SpecralType = "O" | "B" | "A" | "F" | "G" | "K" | "M"
 export const Astro = {
-    Planet,
-    Star,
-    Moon,
-    BlackHole,
-    Astroid,
+    Planet: () => new Planet(),
+    Star: () => new Star(),
+    Moon: () => new Moon(),
+    BlackHole: () => new BlackHole(),
+    Astroid: () => new Astroid(),
 };
 export class AstroObject {
     kinematics;

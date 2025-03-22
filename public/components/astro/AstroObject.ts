@@ -10,11 +10,11 @@ import { Astroid } from "../templates/Asteroid.js";
 // type SpecralType = "O" | "B" | "A" | "F" | "G" | "K" | "M"
 
 export const Astro = {
-	Planet,
-	Star,
-	Moon,
-	BlackHole,
-	Astroid,
+	Planet: () => new Planet(),
+	Star: () => new Star(),
+	Moon: () => new Moon(),
+	BlackHole: () => new BlackHole(),
+	Astroid: () => new Astroid(),
 };
 export class AstroObject {
 	static count = 0;
@@ -39,10 +39,13 @@ export class AstroObject {
 		universeFormat: UniverseFormat,
 		public kinematics: Kinematics,
 		public set: AstroSet<any>,
-		properties?: AstroProperties,
+		properties?: AstroProperties
 	) {
 		Object.assign(this, properties);
-		this.name ||= AstroObject.createName(universeFormat, this.set.display as AstroTemplates);
+		this.name ||= AstroObject.createName(
+			universeFormat,
+			this.set.display as AstroTemplates
+		);
 		this.set.create(this);
 	}
 

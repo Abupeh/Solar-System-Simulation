@@ -14,6 +14,7 @@ import { Container } from "../interfaces/Container.js";
 import { PlaceDisplay } from "./PlaceDisplay.js";
 import { Button } from "../interfaces/Button.js";
 import { Controller } from "../interfaces/Controller.js";
+import { Content } from "../../content/Content.js";
 const colors = ["708090", "c6e2ff"];
 export class Place {
 	public template: AstroTemplates = "Planet";
@@ -32,8 +33,8 @@ export class Place {
 		return new AstroObject(
 			this.universe.format,
 			new Kinematics(),
-			new Astro[template](),
-			Astro[template].defaults
+			Astro[template](),
+			Astro[template]().defaults
 		);
 	}
 
@@ -47,11 +48,11 @@ export class Place {
 		).secondaryColor();
 	}
 
-	createSetContainer() {
+	createSetContainer(array: typeof this.placeObjects) {
 		let count = 0;
 		const buttons = [];
-		for (const key in this.placeObjects) {
-			const placeObject = this.placeObjects[key as AstroTemplates];
+		for (const key in array) {
+			const placeObject = array[key as AstroTemplates];
 			const SelectButton = PlaceDisplay.setButton(
 				this.global,
 				count,
@@ -70,12 +71,25 @@ export class Place {
 		).contain(buttons);
 	}
 
-	createVariables(setContainer: Container) {
+	createVariables(
+		array: typeof this.placeObjects,
+		setContainer: Container,
+		handleProperties = false
+	) {
 		let count = 0;
 		const containers = [];
-		for (const key in this.placeObjects) {
-			const { set } = this.placeObjects[key as AstroTemplates];
-			const container = PlaceDisplay.handleVariables(this.global, set, true);
+		for (const key in array) {
+			const container = handleProperties
+				? PlaceDisplay.handleProperties(
+						this.global,
+						() => array[key as AstroTemplates],
+						true
+				  )
+				: PlaceDisplay.handleVariables(
+						this.global,
+						() => array[key as AstroTemplates],
+						true
+				  );
 			container.toEnable(false);
 			container.whenEnable(setContainer.controllers[count] as Button, containers);
 			containers.push(container);
@@ -89,14 +103,24 @@ export class Place {
 			this.template = template;
 		};
 	}
-	update(kinematics: KinematicsData) {
-		const astroObject = this.placeObjects[this.template];
-		astroObject.kinematics.position = new Vector(...kinematics.position);
-		return astroObject;
-	}
+
 	create(kinematics: KinematicsData) {
-		const astroObject = this.update(kinematics);
+		this.placeObjects[this.template].kinematics.position = new Vector(
+			...kinematics.position
+		);
+		this.universe.appendObject(this.placeObjects[this.template]);
+		const {
+			trail,
+			set,
+			kinematics: kinematic,
+			...properties
+		} = this.placeObjects[this.template];
+		const variables = this.placeObjects[this.template].set.variables;
 		this.placeObjects[this.template] = this.defaultAstroObject(this.template);
-		this.universe.appendObject(astroObject);
+		Object.assign(this.placeObjects[this.template], properties);
+		Object.assign(
+			this.placeObjects[this.template].set.variables,
+			structuredClone(variables)
+		);
 	}
 }

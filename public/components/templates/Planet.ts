@@ -24,7 +24,9 @@ export class Planet extends AstroSet<typeof Planet.details> {
 		habitability: 0,
 	};
 	static defaults = {};
-	constructor(variables = Planet.details) {
+	defaults = Planet.defaults;
+
+	constructor(variables = structuredClone(Planet.details)) {
 		super(variables);
 	}
 	update() {}

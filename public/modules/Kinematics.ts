@@ -7,19 +7,21 @@ export class Kinematics {
 	static VELOCITY_AMPLITUDE = 20;
 
 	constructor(
-		public position = new Vector(0, 0),
-		public velocity = new Vector(0, 0)
+		public position = new Vector(0, 0, { position: true }),
+		public velocity = new Vector(0, 0, { velocity: true })
 	) {}
 
-	applyGravitationalForce(astroObjects: AstroObject[], gravity: number, mass: number) {
+	applyGravitationalForce(
+		astroObjects: AstroObject[],
+		gravity: number,
+		mass: number
+	) {
 		for (const { kinematics, mass: astroMass } of astroObjects) {
 			if (this == kinematics) continue;
 			const distance = Vector.distance(kinematics.position, this.position);
 			const force = Vector.normalize(distance);
 			force
-				.scale(
-					Kinematics.GRAVITATIONAL_CONSTANT * mass * astroMass * gravity
-				)
+				.scale(Kinematics.GRAVITATIONAL_CONSTANT * mass * astroMass * gravity)
 				.scale(1 / distance.magnitude)
 				.scale(1 / mass)
 				.scale(Kinematics.FORCE_AMPLITUDE);

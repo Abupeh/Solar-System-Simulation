@@ -3,6 +3,7 @@ export class Camera {
     global;
     static INITIAL_ZOOM = 0.003;
     static SCROLL_SPEED = 1.2;
+    static ENABLE_SCROLL = true;
     static DRAG_BUTTON = 1;
     eventListeners = [
         [this.scroll, "wheel"],
@@ -43,14 +44,20 @@ export class Camera {
     getMouse(x, y) {
         const [offsetX, offsetY] = this.offset();
         return [
-            (x - this.global.centerWidth) / this.zoom - offsetX - this.global.tracker.followingX(),
-            (y - this.global.centerHeight) / this.zoom - offsetY - this.global.tracker.followingY(),
+            (x - this.global.centerWidth) / this.zoom -
+                offsetX -
+                this.global.tracker.followingX(),
+            (y - this.global.centerHeight) / this.zoom -
+                offsetY -
+                this.global.tracker.followingY(),
         ];
     }
     scroll(event) {
         if (this.drag.active)
             return;
-        this.zoom *= event.deltaY > 0 ? 1 / Camera.SCROLL_SPEED : Camera.SCROLL_SPEED;
+        if (Camera.ENABLE_SCROLL)
+            this.zoom *=
+                event.deltaY > 0 ? 1 / Camera.SCROLL_SPEED : Camera.SCROLL_SPEED;
     }
     mouseDown({ clientX, clientY, button }) {
         if (button !== Camera.DRAG_BUTTON)

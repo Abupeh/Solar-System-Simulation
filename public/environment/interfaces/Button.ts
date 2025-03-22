@@ -9,7 +9,7 @@ export abstract class Button implements Controller {
 		public y: number,
 		public width: number,
 		public height: number,
-		public text: string
+		public text: string,
 	) {
 		this.global.event.onclick(this.handleClick.bind(this));
 		this.global.event.onmousemove(this.handleHover.bind(this));
@@ -26,6 +26,8 @@ export abstract class Button implements Controller {
 		if ("toggled" in this) this.toggled = true;
 		this.callback(0, 0);
 	}
+
+	public placeDisplay = false;
 
 	size = 0;
 	secondSize(total: number) {

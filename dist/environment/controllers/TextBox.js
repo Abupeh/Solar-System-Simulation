@@ -23,6 +23,7 @@ export class TextBox {
         this.global.event.onmousemove(this.handleHover.bind(this));
         this.complete();
     }
+    placeDisplay = false;
     focused = false;
     handleClick(x, y) {
         if (this.focused)

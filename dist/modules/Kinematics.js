@@ -5,7 +5,7 @@ export class Kinematics {
     static GRAVITATIONAL_CONSTANT = 0.0087;
     static FORCE_AMPLITUDE = 10;
     static VELOCITY_AMPLITUDE = 20;
-    constructor(position = new Vector(0, 0), velocity = new Vector(0, 0)) {
+    constructor(position = new Vector(0, 0, { position: true }), velocity = new Vector(0, 0, { velocity: true })) {
         this.position = position;
         this.velocity = velocity;
     }

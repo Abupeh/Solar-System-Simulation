@@ -1,3 +1,4 @@
+import { Planet } from "../../components/templates/Planet.js";
 export class AstroObjectDisplay {
     global;
     static GRADIENT_FADE = "ff";
@@ -27,10 +28,12 @@ export class AstroObjectDisplay {
         gradient.addColorStop(1, color + AstroObjectDisplay.GRADIENT_FADE);
         return gradient;
     }
-    renderBody({ x, y, radius }, gradient) {
+    renderBody({ x, y, radius, set }, gradient) {
         this.global.ctx.arc(x, y, radius, 0, 2 * Math.PI);
         this.global.ctx.shadowColor = AstroObjectDisplay.SHADOW_COLOR;
         this.global.ctx.shadowBlur = AstroObjectDisplay.SHADOW_BLUR;
         this.global.ctx.fillStyle = gradient;
+        if (set instanceof Planet && set.variables.rings.color === '#dddddd')
+            this.global.ctx.fillStyle = '#ffffff';
     }
 }

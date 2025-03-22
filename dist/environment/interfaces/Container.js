@@ -1,4 +1,6 @@
 import { SelectButton } from "../controllers/SelectButton.js";
+import { PlaceDisplay } from "../context/PlaceDisplay.js";
+import { Camera } from "../../display/base/Camera.js";
 export class Container {
     global;
     x;
@@ -26,6 +28,37 @@ export class Container {
         this.text = text;
         return this;
     }
+    scroll(sideContainer) {
+        this.global.event.scroll((scroll) => this.handleScroll(sideContainer, scroll));
+        return this;
+    }
+    handleScroll(sideContainer, scroll) {
+        if (!this.onContainer(sideContainer, this.global.event.mouseX, this.global.event.mouseY))
+            return (Camera.ENABLE_SCROLL = true);
+        Camera.ENABLE_SCROLL = false;
+        this.controllers.forEach((controller) => {
+            const scrollAmount = scroll * PlaceDisplay.SCROLL_SPEED;
+            controller.y += scrollAmount;
+            if (controller instanceof Container)
+                controller.handleScroll(sideContainer, scroll);
+        });
+    }
+    placeDisplay = false;
+    place() {
+        this.controllers.forEach((controller) => {
+            controller.placeDisplay = true;
+            if (controller instanceof Container)
+                controller.place();
+        });
+        this.placeDisplay = true;
+        return this;
+    }
+    onContainer(container, x, y) {
+        return (x > container.x &&
+            x < container.x + container.width &&
+            y > container.y &&
+            y < container.y + container.height);
+    }
     useSecondaryColor = false;
     secondaryColor() {
         this.useSecondaryColor = true;
@@ -43,7 +76,7 @@ export class Container {
     }
     whenEnable(button, disableContainers) {
         button.containerCallbacks.push(() => {
-            disableContainers.forEach(container => {
+            disableContainers.forEach((container) => {
                 container.toEnable(false);
             });
             this.toEnable(true);

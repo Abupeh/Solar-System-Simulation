@@ -17,7 +17,13 @@ export class Vector {
 	static amplitude(vector: Vector, scalar: number) {
 		return new Vector(vector.x * scalar, vector.y * scalar)
 	}
-	constructor(public x: number, public y: number) {}
+	public x: number;
+	public y: number
+	constructor(x: number, y: number, name: { [key: string]: boolean } = {}) {
+		Object.assign(this, name);
+		this.x = x;
+		this.y = y;
+	}
 	add(v: Vector) {
 		this.x += v.x;
 		this.y += v.y;

@@ -4,4 +4,5 @@ export interface Controller {
 	width: number;
 	height: number;
 	enabled: boolean;
+	placeDisplay: boolean;
 }

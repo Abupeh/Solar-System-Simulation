@@ -8,7 +8,8 @@ export class Astroid extends AstroSet {
         nucleusSize: 0,
     };
     static defaults = {};
-    constructor(variables = Astroid.details) {
+    defaults = Astroid.defaults;
+    constructor(variables = structuredClone(Astroid.details)) {
         super(variables);
     }
     update() {

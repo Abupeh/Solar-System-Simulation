@@ -69,11 +69,11 @@ export class Universe {
         switch (property) {
             case "consice":
                 const consiceAstroBody = body;
-                this.append(consiceAstroBody, consiceAstroBody, new Astro[template]());
+                this.append(consiceAstroBody, consiceAstroBody, Astro[template]());
                 break;
             case "kinematic":
                 const { kinematics, properties } = body;
-                this.append(kinematics, properties, new Astro[template]());
+                this.append(kinematics, properties, Astro[template]());
                 break;
             case "precise":
                 const preciseAstroBody = body;

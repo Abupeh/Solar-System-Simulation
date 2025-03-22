@@ -16,7 +16,9 @@ export class BlackHole extends AstroSet<typeof BlackHole.details> {
 		mass: 100000,
 		color: "#303030",
 	};
-	constructor(variables = BlackHole.details) {
+	defaults = BlackHole.defaults;
+
+	constructor(variables = structuredClone(BlackHole.details)) {
 		super(variables);
 	}
 	update() {

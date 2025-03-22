@@ -20,6 +20,8 @@ export class TextBox implements Controller {
 		this.complete();
 	}
 
+	public placeDisplay = false;
+
 	focused = false;
 
 	public handleClick(x: number, y: number) {

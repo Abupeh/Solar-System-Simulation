@@ -28,6 +28,7 @@ export class Button {
             this.toggled = true;
         this.callback(0, 0);
     }
+    placeDisplay = false;
     size = 0;
     secondSize(total) {
         if (total == 1)

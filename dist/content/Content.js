@@ -12,14 +12,23 @@ export class Content {
         this.universe = universe;
         this.place = new Place(this.global, this.universe);
         this.createButtons();
-        const container = this.place.createSetContainer();
+        this.createPlaceDisplay(this.place.placeObjects);
+    }
+    createPlaceDisplay(array) {
+        const container = this.place.createSetContainer(array);
         const sideContainer = this.place.createSideContainer(this.global);
         this.appendControllers(sideContainer);
         this.appendControllers(container);
-        const variables = this.place.createVariables(container);
+        const variables = [
+            ...this.place.createVariables(array, container),
+            ...this.place.createVariables(array, container, true),
+        ];
         this.appendControllers(...variables);
+        variables.forEach((variable) => variable.place());
+        variables.forEach((variable) => variable.scroll(sideContainer));
         const firstButton = container.controllers[0];
         firstButton.defaultClick();
+        return variables;
     }
     createButtons() {
         const Place = new ActionButton(this.global, 5, 5, 5, 5, "+").onSelectClick((position) => this.place.create({ position }));

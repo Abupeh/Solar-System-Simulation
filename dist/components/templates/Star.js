@@ -26,7 +26,8 @@ export class Star extends AstroSet {
         mass: 10000,
         color: '#fff000'
     };
-    constructor(variables = Star.details) {
+    defaults = Star.defaults;
+    constructor(variables = structuredClone(Star.details)) {
         super(variables);
     }
     update() { }
