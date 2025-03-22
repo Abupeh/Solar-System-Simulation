@@ -14,10 +14,14 @@ export class Tracker {
         this.reference = !this.reference;
     }
     followingX = () => {
-        return this.reference && this.following ? -this.following.kinematics.position.x : 0;
+        return this.reference && this.following
+            ? -this.following.kinematics.position.x
+            : 0;
     };
     followingY = () => {
-        return this.reference && this.following ? -this.following.kinematics.position.y : 0;
+        return this.reference && this.following
+            ? -this.following.kinematics.position.y
+            : 0;
     };
     trackFollow() {
         this.previousTrack[0] = this.track[0];

@@ -30,13 +30,38 @@ export class Content {
         firstButton.defaultClick();
         return variables;
     }
+    followingNumber = 0;
     createButtons() {
-        const Place = new ActionButton(this.global, 5, 5, 5, 5, "+").onSelectClick((position) => this.place.create({ position }));
+        const Place = new ActionButton(this.global, 7, 5, 5, 5, "+").onSelectClick((position) => this.place.create({ position }));
         this.appendControllers(Place);
-        const Reference = new ToggleButton(this.global, 5, 11, 5, 5, "R").onClick((pos) => {
+        const Reference = new ToggleButton(this.global, 7, 11, 5, 5, "R").onClick((pos) => {
             this.global.tracker.toggleReference(this.universe.astroObjects);
         });
         this.appendControllers(Reference);
+        const FollowUp = new ActionButton(this.global, 13, 11, 5, 5, ">").onClick(() => {
+            if (this.universe.astroObjects.length <= this.followingNumber) {
+                this.followingNumber = 0;
+            }
+            this.global.tracker.following =
+                this.universe.astroObjects[this.followingNumber];
+            this.followingNumber++;
+        });
+        this.appendControllers(FollowUp);
+        const FollowDown = new ActionButton(this.global, 1, 11, 5, 5, "<").onClick(() => {
+            if (this.followingNumber < 0)
+                this.followingNumber = this.universe.astroObjects.length - 1;
+            this.global.tracker.following =
+                this.universe.astroObjects[this.followingNumber];
+            this.followingNumber--;
+        });
+        this.appendControllers(FollowDown);
+        const EndFollow = new ToggleButton(this.global, 7, 17, 5, 5, "F").onClick(() => {
+            if (this.global.tracker.following)
+                return (this.global.tracker.following = undefined);
+            this.global.tracker.following = this.universe.astroObjects[this.followingNumber];
+        }).toggle();
+        EndFollow.defaultClick();
+        this.appendControllers(EndFollow);
     }
     appendControllers(...controllers) {
         this.controllers.push(...controllers);

@@ -53,7 +53,8 @@ export class Global {
         if (this.time.iterations != 0) {
             this.tracker.trackFollow();
             this.time.update(this.universe, this.trail);
-            this.tracker.follow(this.universe.astroObjects[0]);
+            if (this.tracker.following)
+                this.tracker.follow(this.tracker.following);
         }
         this.cursor.followCamera(this.camera);
         this.cursor.followControllers(this.content.controllers);
