@@ -42,13 +42,12 @@ export class AstroObject {
             density: 100,
             pressure: 1000,
         },
-        spin: 0,
         magneticField: 0,
         tectonicActivity: 0,
         volcanism: 0,
         habitability: 0,
-        solarStage: ["O", "B", "A", "F", "G", "K", "M"],
-        luminosity: 12,
+        solar_stage: ["O", "B", "A", "F", "G", "K", "M"],
+        luminosity: 0,
         metallicity: 0,
         solarWindSpeed: 0,
         habitableZone: {
@@ -62,10 +61,11 @@ export class AstroObject {
             composition: ["Ice", "Water", "Gas", "Lava"],
             depth: 100,
         },
-        innerComposition: ["Carbonaceous", "Silicaceous", "Metallic"],
+        composition: ["Carbonaceous", "Silicaceous", "Metallic"],
         tailLength: 0,
         nucleusSize: 0,
         eventHorizonRadius: 0,
+        spin: 0,
         charge: 0,
         accretionDisk: true,
         hawkingRadiation: false,
@@ -78,7 +78,11 @@ export class AstroObject {
         Object.assign(this.properties, AstroSets[this.type].createDefaults());
     }
     update(astroObjects) {
-        this.kinematics.applyGravitationalForce(astroObjects, this.properties.gravity, this.properties.mass);
+        // this.kinematics.applyGravitationalForce(
+        // 	astroObjects,
+        // 	this.properties.gravity,
+        // 	this.properties.mass
+        // );
         this.kinematics.applyPositionalForce();
     }
 }

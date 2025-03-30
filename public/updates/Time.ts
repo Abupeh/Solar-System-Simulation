@@ -8,26 +8,40 @@ export class Time {
 	public elapsed = 0;
 	public iterations = Time.ITERATIONS;
 	public pausedIterations: number | null = null; //? null means unpaused
-	constructor(private display: Global) {
-		this.display.event.keydown(" ", this.pause.bind(this));
-		this.display.event.keydown("ArrowUp", this.speedUp.bind(this));
-		this.display.event.keydown("ArrowDown", this.slowDown.bind(this));
+	constructor(private global: Global) {
+		this.global.event.keydown(" ", this.pause.bind(this));
+		this.global.event.keydown("ArrowUp", this.speedUp.bind(this));
+		this.global.event.keydown("ArrowDown", this.slowDown.bind(this));
 	}
 
-	update(universe: Universe, trail: Trail) {
+	update(universe: Universe, trail: Trail, iterate: boolean) {
+		if(iterate) {
+			for(let i = 0; i < this.iterations; i++) {
+				universe.updateAstroObjects();
+				universe.updateTrails(trail, iterate);
+			}
+			return;
+		}
 		for (let i = 0; i < this.iterations; i++) {
 			universe.updateAstroObjects();
 		}
-		if (this.iterations != 0) universe.updateTrails(trail);
+		if (this.iterations != 0) universe.updateTrails(trail, iterate);
 	}
-	pause() {
-		if (!this.pausedIterations) {
-			this.pausedIterations = this.iterations;
+
+	onUnPauseCallback = () => {};
+	onUnPause(callback: () => void) {
+		this.onUnPauseCallback = callback;
+	}
+	pause(forcePause = false) {
+		if (!this.pausedIterations || forcePause) {
+			if(this.iterations) this.pausedIterations = this.iterations;
 			this.iterations = 0;
 			return;
 		}
+		this.onUnPauseCallback();
+		this.onUnPauseCallback = () => {};
 
-		this.iterations = this.pausedIterations;
+		this.iterations = this.pausedIterations || this.iterations;
 		this.pausedIterations = null;
 	}
 	speedUp() {

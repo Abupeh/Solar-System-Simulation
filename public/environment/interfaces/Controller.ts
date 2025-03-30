@@ -5,4 +5,5 @@ export interface Controller {
 	height: number;
 	enabled: boolean;
 	placeDisplay: boolean;
+	onUpdate: () => void;
 }

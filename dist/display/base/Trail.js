@@ -10,15 +10,16 @@ export class Trail {
     constructor(global) {
         this.global = global;
     }
-    updateTrail(astroObject, { followingX, followingY } = this.global.tracker) {
-        if (astroObject.trail.length > Trail.TRAIL_LENGTH)
-            astroObject.trail.shift();
+    updateTrail(astroObject, iterate, { followingX, followingY } = this.global.tracker) {
+        if (!iterate)
+            if (astroObject.trail.length > Trail.TRAIL_LENGTH)
+                astroObject.trail.shift();
         astroObject.trail.push([
             astroObject.kinematics.position.x + followingX(),
             astroObject.kinematics.position.y + followingY(),
         ]);
     }
-    draw({ trail, radius, color }) {
+    draw({ trail, properties: { radius, color } }) {
         if (trail.length < 1)
             return;
         const trailSize = radius / Trail.TRAIL_WIDTH;

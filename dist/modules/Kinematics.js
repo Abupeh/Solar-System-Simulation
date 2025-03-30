@@ -5,12 +5,12 @@ export class Kinematics {
     static GRAVITATIONAL_CONSTANT = 0.0087;
     static FORCE_AMPLITUDE = 10;
     static VELOCITY_AMPLITUDE = 20;
-    constructor(position = new Vector(0, 0, { position: true }), velocity = new Vector(0, 0, { velocity: true })) {
+    constructor(position = new Vector(0, 0), velocity = new Vector(0, 0)) {
         this.position = position;
         this.velocity = velocity;
     }
     applyGravitationalForce(astroObjects, gravity, mass) {
-        for (const { kinematics, mass: astroMass } of astroObjects) {
+        for (const { kinematics, properties: { mass: astroMass } } of astroObjects) {
             if (this == kinematics)
                 continue;
             const distance = Vector.distance(kinematics.position, this.position);

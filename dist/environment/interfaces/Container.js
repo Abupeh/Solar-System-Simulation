@@ -1,6 +1,6 @@
 import { SelectButton } from "../controllers/SelectButton.js";
-import { PlaceDisplay } from "../context/PlaceDisplay.js";
 import { Camera } from "../../display/base/Camera.js";
+import { Create } from "../context/Create.js";
 export class Container {
     global;
     x;
@@ -37,20 +37,29 @@ export class Container {
             return (Camera.ENABLE_SCROLL = true);
         Camera.ENABLE_SCROLL = false;
         this.controllers.forEach((controller) => {
-            const scrollAmount = scroll * PlaceDisplay.SCROLL_SPEED;
+            const scrollAmount = scroll * Create.scrollSpeed;
             controller.y += scrollAmount;
             if (controller instanceof Container)
                 controller.handleScroll(sideContainer, scroll);
         });
     }
+    onUpdate = () => { };
     placeDisplay = false;
-    place() {
+    place(placer, controllers) {
         this.controllers.forEach((controller) => {
             controller.placeDisplay = true;
+            controller.onUpdate = () => {
+                placer.updateSelected(controllers);
+            };
             if (controller instanceof Container)
-                controller.place();
+                controller.place(placer, controllers);
         });
         this.placeDisplay = true;
+        return this;
+    }
+    color = '';
+    useColor(color) {
+        this.color = color;
         return this;
     }
     onContainer(container, x, y) {
@@ -58,11 +67,6 @@ export class Container {
             x < container.x + container.width &&
             y > container.y &&
             y < container.y + container.height);
-    }
-    useSecondaryColor = false;
-    secondaryColor() {
-        this.useSecondaryColor = true;
-        return this;
     }
     enabled = true;
     toEnable(enable) {

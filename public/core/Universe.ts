@@ -12,7 +12,7 @@ import type {
 	PreciseAstroData,
 	VersionalAstroData,
 } from "../components/astro/AstroObject.d.js";
-import { Astro, AstroObject } from "../components/astro/AstroObject.js";
+
 import type {
 	AstroObjectArray,
 	AstroObjectBodyList,
@@ -22,7 +22,7 @@ import type {
 	UniverseFormat,
 	VersionFormat,
 } from "./Universe.d.js";
-import { AstroSet } from "../components/class/AstroSet.js";
+import { AstroObject } from "../components/astro/AstroObject.js";
 
 type UniverseFolder = "tests" | "data";
 export class Universe {
@@ -41,9 +41,9 @@ export class Universe {
 		});
 	}
 
-	updateTrails(trail: Trail) {
+	updateTrails(trail: Trail, iterate: boolean) {
 		this.astroObjects.forEach((astroObject) => {
-			trail.updateTrail(astroObject);
+			trail.updateTrail(astroObject, iterate);
 		});
 	}
 
@@ -69,20 +69,20 @@ export class Universe {
 		switch (format[0]) {
 			case "-L":
 				const { AstroObjects } = data as AstroObjectArray;
-				AstroObjects?.forEach((body) => this.appendBody(body, format, body.template));
+				AstroObjects?.forEach((body) => this.appendBody(body, format));
 				break;
 			case "-B":
 				const { blackholes, stars, planets, moons } = data as AstroObjectBodyList;
-				blackholes?.forEach((body) => this.appendBody(body, format, 'BlackHole'));
-				stars?.forEach((body) => this.appendBody(body, format, 'Star'));
-				planets?.forEach((body) => this.appendBody(body, format, 'Planet'));
-				moons?.forEach((body) => this.appendBody(body, format, 'Moon'));
+				blackholes?.forEach((body) => this.appendBody(body, format));
+				stars?.forEach((body) => this.appendBody(body, format));
+				planets?.forEach((body) => this.appendBody(body, format));
+				moons?.forEach((body) => this.appendBody(body, format));
 		}
 	}
 
-	private appendBody(body: VersionalAstroData, format: OrganizedFormat, template: AstroTemplates) {
+	private appendBody(body: VersionalAstroData, format: OrganizedFormat) {
 		const astroObject = this.assertBodyVersion(body, format[1]);
-		this.appendBodyProperty(astroObject, format[2], template);
+		this.appendBodyProperty(astroObject, format[2]);
 	}
 
 	private assertBodyVersion(body: VersionalAstroData, version: VersionFormat) {
@@ -97,17 +97,16 @@ export class Universe {
 
 	private appendBodyProperty(
 		body: VersionalAstroData,
-		property: PropertyFormat,
-		template: AstroTemplates
+		property: PropertyFormat
 	) {
 		switch (property) {
 			case "consice":
 				const consiceAstroBody = body as ConsiceAstroData;
-				this.append(consiceAstroBody, consiceAstroBody, Astro[template]());
+				this.append(consiceAstroBody, consiceAstroBody);
 				break;
 			case "kinematic":
 				const { kinematics, properties } = body as KinematicsAstroData;
-				this.append(kinematics, properties, Astro[template]());
+				this.append(kinematics, properties);
 				break;
 			case "precise":
 				const preciseAstroBody = body as PreciseAstroData;
@@ -121,20 +120,17 @@ export class Universe {
 
 	append(
 		kinematics: KinematicsData,
-		properties: AstroProperties | ConsiceAstroData | PreciseAstroData,
-		set: AstroSet<any>
+		properties: AstroProperties | ConsiceAstroData | PreciseAstroData
 	) {
-		this.astroObjects.push(
-			new AstroObject(
-				this.format,
-				new Kinematics(
-					new Vector(...kinematics.position),
-					kinematics.velocity && new Vector(...kinematics.velocity)
-				),
-				set,
-				properties
+		const astroObject = new AstroObject(
+			this.format,
+			new Kinematics(
+				new Vector(...kinematics.position),
+				kinematics.velocity && new Vector(...kinematics.velocity)
 			)
 		);
+		Object.assign(astroObject.properties, structuredClone(properties));
+		this.astroObjects.push(astroObject);
 	}
 
 	appendObject(astroObject: AstroObject) {

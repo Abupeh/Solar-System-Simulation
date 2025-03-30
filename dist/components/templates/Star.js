@@ -1,5 +1,8 @@
 import { AstroSet } from "../class/AstroSet.js";
 export class Star extends AstroSet {
+    static createDefaults() {
+        return {};
+    }
     display = "Star";
     static details = {
         type: [

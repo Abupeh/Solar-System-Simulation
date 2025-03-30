@@ -21,4 +21,10 @@ export class Astroid extends AstroSet<typeof Astroid.details> {
 	create(astroObject: AstroObject): void {
 		
 	}
+
+	static createDefaults() {
+		return {
+			
+		}
+	}
 }

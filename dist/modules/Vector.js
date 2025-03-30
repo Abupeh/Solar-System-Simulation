@@ -1,4 +1,6 @@
 export class Vector {
+    x;
+    y;
     static distance(vectorA, vectorB) {
         return new Vector(vectorA.x - vectorB.x, vectorA.y - vectorB.y);
     }
@@ -14,10 +16,7 @@ export class Vector {
     static amplitude(vector, scalar) {
         return new Vector(vector.x * scalar, vector.y * scalar);
     }
-    x;
-    y;
-    constructor(x, y, name = {}) {
-        Object.assign(this, name);
+    constructor(x, y) {
         this.x = x;
         this.y = y;
     }

@@ -2,6 +2,11 @@ import { AstroObject } from "../astro/AstroObject.js";
 import { AstroSet } from "../class/AstroSet.js";
 
 export class Planet extends AstroSet<typeof Planet.details> {
+	static createDefaults() {
+		return {
+			
+		}
+	}
 	public readonly display = "Planet";
 	static details = {
 		type: ["Terrestrial", "Gas", "Ice", "Giant", "Dwarf"],

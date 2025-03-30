@@ -16,4 +16,7 @@ export class Astroid extends AstroSet {
     }
     create(astroObject) {
     }
+    static createDefaults() {
+        return {};
+    }
 }

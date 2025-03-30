@@ -1,7 +1,15 @@
 import { AstroObject } from "../astro/AstroObject.js";
 import { AstroSet } from "../class/AstroSet.js";
 
+
+//! Remove public defaults
+
 export class BlackHole extends AstroSet<typeof BlackHole.details> {
+	static createDefaults() {
+		return {
+			
+		}
+	}
 	public readonly display = "BlackHole";
 	static details = {
 		type: ["Stellar", "Intermediate", "SuperMassive", "Primordial"],

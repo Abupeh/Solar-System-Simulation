@@ -20,6 +20,8 @@ export class ActionButton extends Button {
 			this.callback(x, y);
 
 		this.hold = false;
+		this.onUpdate();
+
 	}
 
 	onSelectClick(callback: (position: [number, number]) => void) {

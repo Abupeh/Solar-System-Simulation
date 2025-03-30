@@ -1,5 +1,8 @@
 import { AstroSet } from "../class/AstroSet.js";
 export class Planet extends AstroSet {
+    static createDefaults() {
+        return {};
+    }
     display = "Planet";
     static details = {
         type: ["Terrestrial", "Gas", "Ice", "Giant", "Dwarf"],

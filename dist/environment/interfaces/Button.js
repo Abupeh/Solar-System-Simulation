@@ -28,6 +28,8 @@ export class Button {
             this.toggled = true;
         this.callback(0, 0);
     }
+    onUpdate = () => { };
+    value = "";
     placeDisplay = false;
     size = 0;
     secondSize(total) {

@@ -6,6 +6,7 @@ export class ToggleButton extends Button {
 		if (!this.onButton(x, y)) return;
 		this.toggle();
 		this.callback(x, y);
+		this.onUpdate();
 	}
 
 	onToggle(callback: (position: [number, number]) => void) {

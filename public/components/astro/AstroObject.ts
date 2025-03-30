@@ -1,60 +1,106 @@
 import { UniverseFormat } from "../../core/Universe.d.js";
-import { Kinematics } from "../../modules/Kinematics";
-import type { AstroProperties, AstroTemplates } from "./AstroObject.d.js";
-import { AstroSet } from "../class/AstroSet.js";
-import { Planet } from "../templates/Planet.js";
+import { Kinematics } from "../../modules/Kinematics.js";
+import {Planet } from "../templates/Planet.js";
 import { Star } from "../templates/Star.js";
 import { Moon } from "../templates/Moon.js";
 import { BlackHole } from "../templates/BlackHole.js";
 import { Astroid } from "../templates/Asteroid.js";
-// type SpecralType = "O" | "B" | "A" | "F" | "G" | "K" | "M"
+//! public sets are AstroSets
 
-export const Astro = {
-	Planet: () => new Planet(),
-	Star: () => new Star(),
-	Moon: () => new Moon(),
-	BlackHole: () => new BlackHole(),
-	Astroid: () => new Astroid(),
+export const AstroSets = {
+	Planet,
+	Star,
+	Moon,
+	BlackHole,
+	Astroid,
 };
+
+export type AstroTemplates = keyof typeof AstroSets;
+
+export type AstroProperties = typeof AstroObject.properties;
 export class AstroObject {
 	static count = 0;
 	static createName(universeFormat: UniverseFormat, type: AstroTemplates) {
 		return type + ":" + AstroObject.count++ + universeFormat;
 	}
+
+	public type: AstroTemplates = "Planet";
 	public name: string;
-
-	public mass = 1000;
-	public radius = 2000;
-	public gravity = 1;
-	public surfaceTemperature = 0; //!
-	public age = 0; //!
-	public color = "#AABBCC";
-
-	get density() {
-		return this.mass / this.radius;
-	}
 	public trail: [number, number][] = [];
 
-	constructor(
-		universeFormat: UniverseFormat,
-		public kinematics: Kinematics,
-		public set: AstroSet<any>,
-		properties?: AstroProperties
-	) {
-		Object.assign(this, properties);
-		this.name ||= AstroObject.createName(
-			universeFormat,
-			this.set.display as AstroTemplates
+	static properties = {
+		mass: 1000,
+		radius: 2000,
+		density: 1000 / 2000,
+		gravity: 1,
+		surfaceTemperature: 0,
+		temperature: 0,
+		age: 0,
+		color: "#AABBCC",
+
+		rings: {
+			rings: false,
+			color: "#c9c9c9",
+			size: 100,
+			thickness: 10,
+		},
+		atmosphere: {
+			atmosphere: false,
+			composition: ["N2", "O2"],
+			color: "#c9c9c9",
+			density: 100,
+			pressure: 1000,
+		},
+		spin: 0,
+		magneticField: 0,
+		tectonicActivity: 0,
+		volcanism: 0,
+		habitability: 0,
+
+		solarStage: ["O", "B", "A", "F", "G", "K", "M"],
+		luminosity: 12,
+		metallicity: 0,
+		solarWindSpeed: 0,
+		habitableZone: {
+			habitableZone: false,
+			inner: 0,
+			outer: 0,
+		},
+
+		surfaceComposition: ["Rock", "Metal", "Ice", "Water", "Gas", "Lava"],
+		subsurfaceOcean: {
+			subsurfaceOcean: false,
+			composition: ["Ice", "Water", "Gas", "Lava"],
+			depth: 100,
+		},
+
+		innerComposition: ["Carbonaceous", "Silicaceous", "Metallic"],
+		tailLength: 0,
+		nucleusSize: 0,
+
+		eventHorizonRadius: 0,
+		charge: 0,
+		accretionDisk: true,
+		hawkingRadiation: false,
+		gravitationalLensing: true,
+	};
+
+	public properties: AstroProperties = structuredClone(AstroObject.properties);
+
+	constructor(universeFormat: UniverseFormat, public kinematics: Kinematics) {
+		this.name ||= AstroObject.createName(universeFormat, this.type);
+
+		Object.assign(
+			this.properties,
+			AstroSets[this.type].createDefaults() as AstroProperties
 		);
-		this.set.create(this);
 	}
 
 	update(astroObjects: AstroObject[]) {
-		this.set.update(this);
 		this.kinematics.applyGravitationalForce(
 			astroObjects,
-			this.gravity,
-			this.mass
+			this.properties.gravity,
+			this.properties.mass
 		);
 		this.kinematics.applyPositionalForce();
 	}

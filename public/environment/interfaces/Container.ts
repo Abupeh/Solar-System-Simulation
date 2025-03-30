@@ -2,8 +2,11 @@ import { SelectButton } from "../controllers/SelectButton.js";
 import { Controller } from "./Controller.js";
 import { Global } from "../../global/Global.js";
 import { Button } from "./Button.js";
-import { PlaceDisplay } from "../context/PlaceDisplay.js";
 import { Camera } from "../../display/base/Camera.js";
+import { ControllerProperties, Create, ObjectKeys } from "../context/Create.js";
+import { Place } from "../context/Place.js";
+import { AstroProperties } from "../../components/astro/AstroObject.js";
+type Color = 'space' | 'secondary' | '';
 export class Container implements Controller {
 	public controllers: Controller[] = [];
 	constructor(
@@ -45,7 +48,7 @@ export class Container implements Controller {
 
 		Camera.ENABLE_SCROLL = false;
 		this.controllers.forEach((controller) => {
-			const scrollAmount = scroll * PlaceDisplay.SCROLL_SPEED;
+			const scrollAmount = scroll * Create.scrollSpeed;
 			controller.y += scrollAmount;
 
 			if (controller instanceof Container)
@@ -53,13 +56,30 @@ export class Container implements Controller {
 		});
 	}
 
+	onUpdate = () => {};
+
 	public placeDisplay = false;
-	place() {
+	place(
+		placer: Place,
+		controllers:
+			| ControllerProperties<AstroProperties>
+			| AstroProperties[ObjectKeys<AstroProperties>]
+	) {
 		this.controllers.forEach((controller) => {
 			controller.placeDisplay = true;
-			if (controller instanceof Container) controller.place();
+			controller.onUpdate = () => {
+				placer.updateSelected(controllers);
+			};
+			if (controller instanceof Container) controller.place(placer, controllers);
 		});
 		this.placeDisplay = true;
+		return this;
+	}
+
+	color: Color = '';
+
+	useColor(color: Color) {
+		this.color = color;
 		return this;
 	}
 
@@ -70,12 +90,6 @@ export class Container implements Controller {
 			y > container.y &&
 			y < container.y + container.height
 		);
-	}
-
-	public useSecondaryColor = false;
-	secondaryColor() {
-		this.useSecondaryColor = true;
-		return this;
 	}
 
 	enabled = true;

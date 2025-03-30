@@ -4,7 +4,7 @@ export class Vector {
 	}
 
 	static sum(vectorA: Vector, vectorB: Vector) {
-		return new Vector(vectorA.x + vectorB.x, vectorA.y + vectorB.y)
+		return new Vector(vectorA.x + vectorB.x, vectorA.y + vectorB.y);
 	}
 
 	static normalize(vector: Vector) {
@@ -15,15 +15,10 @@ export class Vector {
 	}
 
 	static amplitude(vector: Vector, scalar: number) {
-		return new Vector(vector.x * scalar, vector.y * scalar)
+		return new Vector(vector.x * scalar, vector.y * scalar);
 	}
-	public x: number;
-	public y: number
-	constructor(x: number, y: number, name: { [key: string]: boolean } = {}) {
-		Object.assign(this, name);
-		this.x = x;
-		this.y = y;
-	}
+
+	constructor(public x: number, public y: number) {}
 	add(v: Vector) {
 		this.x += v.x;
 		this.y += v.y;

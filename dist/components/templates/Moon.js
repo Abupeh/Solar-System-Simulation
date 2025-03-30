@@ -1,5 +1,8 @@
 import { AstroSet } from "../class/AstroSet.js";
 export class Moon extends AstroSet {
+    static createDefaults() {
+        return {};
+    }
     display = "Moon";
     static details = {
         type: ["Regular", "Irregular"],

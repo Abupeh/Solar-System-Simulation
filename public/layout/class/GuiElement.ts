@@ -1,4 +1,6 @@
-import { PlaceDisplay } from "../../environment/context/PlaceDisplay.js";
+import { Create } from "../../environment/context/Create.js";
+import { ToggleButton } from "../../environment/controllers/ToggleButton.js";
+import { Container } from "../../environment/interfaces/Container.js";
 import { Controller } from "../../environment/interfaces/Controller.js";
 import { Global } from "../../global/Global.js";
 
@@ -21,17 +23,16 @@ export abstract class GuiElement {
 	abstract drawLayer(element: Controller): void;
 	abstract drawBase(element: Controller): void;
 	cutoff(element: Controller) {
-		if(!element.placeDisplay) return;
+		if (!element.placeDisplay) return;
 		this.global.ctx.save();
-		const rect = {
-			x: PlaceDisplay.cutoffX,
-			y: PlaceDisplay.cutoffY,
-			width: PlaceDisplay.cutoffWidth,
-			height: PlaceDisplay.cutoffHeight,
-			placeDisplay: false,
-			enabled: false,
-		}
-		this.scale(rect)
+		let rect = {
+			x: Create.cutoffX,
+			y: Create.cutoffY,
+			width: Create.cutoffWidth,
+			height: Create.cutoffHeight,
+		};
+		this.scale(rect as Controller);
+
 		this.global.ctx.rect(rect.x, rect.y, rect.width, rect.height);
 		this.global.ctx.clip();
 	}

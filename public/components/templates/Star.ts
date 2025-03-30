@@ -2,6 +2,11 @@ import { AstroObject } from "../astro/AstroObject.js";
 import { AstroSet } from "../class/AstroSet.js";
 
 export class Star extends AstroSet<typeof Star.details> {
+	static createDefaults() {
+		return {
+			
+		}
+	}
 	public readonly display = "Star";
 
 	static details = {

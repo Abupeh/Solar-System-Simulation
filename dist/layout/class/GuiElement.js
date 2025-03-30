@@ -1,4 +1,4 @@
-import { PlaceDisplay } from "../../environment/context/PlaceDisplay.js";
+import { Create } from "../../environment/context/Create.js";
 export class GuiElement {
     global;
     static font = "Montserrat";
@@ -23,13 +23,11 @@ export class GuiElement {
         if (!element.placeDisplay)
             return;
         this.global.ctx.save();
-        const rect = {
-            x: PlaceDisplay.cutoffX,
-            y: PlaceDisplay.cutoffY,
-            width: PlaceDisplay.cutoffWidth,
-            height: PlaceDisplay.cutoffHeight,
-            placeDisplay: false,
-            enabled: false,
+        let rect = {
+            x: Create.cutoffX,
+            y: Create.cutoffY,
+            width: Create.cutoffWidth,
+            height: Create.cutoffHeight,
         };
         this.scale(rect);
         this.global.ctx.rect(rect.x, rect.y, rect.width, rect.height);

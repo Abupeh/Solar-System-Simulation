@@ -11,6 +11,7 @@ export class Global {
     universe;
     static BACKGROUND_COLOR = "#000000";
     static MAX_RATIO = 100;
+    static GUI_FRAMERATE = 100;
     event = new EventHandler();
     content;
     canvas = document.getElementById("canvas");
@@ -48,11 +49,22 @@ export class Global {
         const [x, y] = this.camera.offset();
         this.ctx.translate(x, y);
     }
+    renderPlace() {
+        this.ctx.save();
+        this.content.astroPlace.transform();
+        this.content.astroPlace.render(this.content.place.selected);
+        this.ctx.restore();
+    }
+    onStart = true;
     render() {
+        if (this.onStart) {
+            this.onStart = false;
+            setInterval(this.guiUpdate.bind(this), Global.GUI_FRAMERATE);
+        }
         this.reset();
         if (this.time.iterations != 0) {
             this.tracker.trackFollow();
-            this.time.update(this.universe, this.trail);
+            this.time.update(this.universe, this.trail, false);
             if (this.tracker.following)
                 this.tracker.follow(this.tracker.following);
         }
@@ -67,8 +79,12 @@ export class Global {
         });
         this.ctx.restore();
         this.gui.render();
+        this.renderPlace();
         //Rerender
         requestAnimationFrame(() => this.render());
+    }
+    guiUpdate() {
+        this.content.place.updateControllersToSelected(this.content.create.Controllers, this.content.place.selected.properties);
     }
     static ToHex(rgb) {
         const hex = rgb.toString(16);

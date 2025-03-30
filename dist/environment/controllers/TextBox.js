@@ -25,6 +25,7 @@ export class TextBox {
     }
     placeDisplay = false;
     focused = false;
+    onUpdate = () => { };
     handleClick(x, y) {
         if (this.focused)
             return this.complete();
@@ -79,7 +80,9 @@ export class TextBox {
                 this.text = "0";
             this.value = new Number(this.text);
         }
+        this.text = this.value.toString();
         this.callback(this.value);
+        this.onUpdate();
     }
     value = "";
     hover = false;

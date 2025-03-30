@@ -26,6 +26,9 @@ export abstract class Button implements Controller {
 		if ("toggled" in this) this.toggled = true;
 		this.callback(0, 0);
 	}
+	onUpdate = () => {};
+
+	public value = "";
 
 	public placeDisplay = false;
 

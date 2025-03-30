@@ -7,8 +7,8 @@ export class Kinematics {
 	static VELOCITY_AMPLITUDE = 20;
 
 	constructor(
-		public position = new Vector(0, 0, { position: true }),
-		public velocity = new Vector(0, 0, { velocity: true })
+		public position = new Vector(0, 0),
+		public velocity = new Vector(0, 0)
 	) {}
 
 	applyGravitationalForce(
@@ -16,7 +16,7 @@ export class Kinematics {
 		gravity: number,
 		mass: number
 	) {
-		for (const { kinematics, mass: astroMass } of astroObjects) {
+		for (const { kinematics, properties: {mass: astroMass } } of astroObjects) {
 			if (this == kinematics) continue;
 			const distance = Vector.distance(kinematics.position, this.position);
 			const force = Vector.normalize(distance);

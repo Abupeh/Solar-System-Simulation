@@ -1,67 +1,76 @@
-import { Astro, AstroObject } from "../../components/astro/AstroObject.js";
+import { AstroObject, } from "../../components/astro/AstroObject.js";
 import { Kinematics } from "../../modules/Kinematics.js";
-import { Vector } from "../../modules/Vector.js";
+import { SelectButton } from "../controllers/SelectButton.js";
+import { TextBox } from "../controllers/TextBox.js";
+import { ToggleButton } from "../controllers/ToggleButton.js";
 import { Container } from "../interfaces/Container.js";
-import { PlaceDisplay } from "./PlaceDisplay.js";
-const colors = ["708090", "c6e2ff"];
 export class Place {
     global;
     universe;
-    template = "Planet";
-    placeObjects = {};
+    selected;
     constructor(global, universe) {
         this.global = global;
         this.universe = universe;
-        for (const key in Astro) {
-            const AstroKey = key;
-            const PlaceObject = this.defaultAstroObject(AstroKey);
-            Object.assign(this.placeObjects, { [AstroKey]: PlaceObject });
+        this.selected = new AstroObject(this.universe.format, new Kinematics());
+    }
+    placeSelected(position) {
+        this.selected = new AstroObject(this.universe.format, new Kinematics());
+        this.selected.kinematics.position.x = position[0];
+        this.selected.kinematics.position.y = position[1];
+        this.universe.appendObject(this.selected);
+    }
+    updateControllersToSelected(controllers, properties = this.selected.properties) {
+        for (const [key, value] of Object.entries(properties)) {
+            if (typeof value == "string" || typeof value == "number") {
+                if (controllers[key].focused)
+                    continue;
+                controllers[key].value = value;
+                controllers[key].text = value.toString();
+                continue;
+            }
+            if (typeof value == "boolean") {
+                controllers[key].toggled = value;
+                continue;
+            }
+            if (value instanceof Array) {
+                controllers[key].controllers.forEach((controller) => {
+                    if (controller instanceof SelectButton ||
+                        controller instanceof ToggleButton) {
+                        controller.toggled = value.includes(controller.value);
+                    }
+                });
+                continue;
+            }
+            this.updateControllersToSelected(controllers[key], value);
         }
     }
-    defaultAstroObject(template) {
-        return new AstroObject(this.universe.format, new Kinematics(), Astro[template](), Astro[template]().defaults);
-    }
-    createSideContainer(global) {
-        return new Container(global, PlaceDisplay.sideX, PlaceDisplay.sideY, PlaceDisplay.sideWidth, PlaceDisplay.sideHeight).secondaryColor();
-    }
-    createSetContainer(array) {
-        let count = 0;
-        const buttons = [];
-        for (const key in array) {
-            const placeObject = array[key];
-            const SelectButton = PlaceDisplay.setButton(this.global, count, placeObject.set.display);
-            SelectButton.onToggle(this.setPlace(key));
-            buttons.push(SelectButton);
-            count++;
+    updateSelected(controllers, properties = this.selected.properties) {
+        for (const [key, value] of Object.entries(controllers)) {
+            if (value instanceof TextBox) {
+                Object.assign(properties, { [key]: value.value });
+                continue;
+            }
+            if (value instanceof SelectButton || value instanceof ToggleButton) {
+                Object.assign(properties, { [key]: value.toggled });
+                continue;
+            }
+            if (value instanceof Container) {
+                const array = properties[key] || [];
+                value.controllers.forEach((controller) => {
+                    if (controller instanceof SelectButton ||
+                        controller instanceof ToggleButton) {
+                        if (controller.toggled) {
+                            if (!array.includes(controller.value))
+                                array.push(controller.value);
+                        }
+                        else if (array.includes(controller.value))
+                            array.splice(array.indexOf(controller.value), 1);
+                    }
+                });
+                Object.assign(properties, { [key]: array });
+                continue;
+            }
+            this.updateSelected(value, properties[key]);
         }
-        return new Container(this.global, PlaceDisplay.INITIAL_X - PlaceDisplay.CONTAINER_X, PlaceDisplay.INITIAL_Y - PlaceDisplay.CONTAINER_Y, PlaceDisplay.X_SEPERATION * count + PlaceDisplay.CONTAINER_X, PlaceDisplay.HEIGHT + PlaceDisplay.CONTAINER_Y * 2).contain(buttons);
-    }
-    createVariables(array, setContainer, handleProperties = false) {
-        let count = 0;
-        const containers = [];
-        for (const key in array) {
-            const container = handleProperties
-                ? PlaceDisplay.handleProperties(this.global, () => array[key], true)
-                : PlaceDisplay.handleVariables(this.global, () => array[key], true);
-            container.toEnable(false);
-            container.whenEnable(setContainer.controllers[count], containers);
-            containers.push(container);
-            count++;
-        }
-        return containers;
-    }
-    setPlace(template) {
-        return () => {
-            this.template = template;
-        };
-    }
-    create(kinematics) {
-        this.placeObjects[this.template].kinematics.position = new Vector(...kinematics.position);
-        this.universe.appendObject(this.placeObjects[this.template]);
-        const { trail, set, kinematics: kinematic, ...properties } = this.placeObjects[this.template];
-        const variables = this.placeObjects[this.template].set.variables;
-        this.placeObjects[this.template] = this.defaultAstroObject(this.template);
-        Object.assign(this.placeObjects[this.template], properties);
-        Object.assign(this.placeObjects[this.template].set.variables, structuredClone(variables));
     }
 }

@@ -1,8 +1,9 @@
+import { Global } from "../../global/Global.js";
 import { GuiElement } from "../class/GuiElement.js";
 export class GuiContainer extends GuiElement {
     static COLOR = "#252525EE";
     static SECONDARY_COLOR = "#181818EE";
-    static ROUNDNESS = 5;
+    static ROUNDNESS = 10;
     static TEXT_COLOR = "#CED4DBDD";
     static FONT_SIZE = 12;
     static FONT_QUALITY = "";
@@ -15,8 +16,10 @@ export class GuiContainer extends GuiElement {
     }
     drawBase(container, ctx = this.global.ctx) {
         ctx.fillStyle = GuiContainer.COLOR;
-        if (container.useSecondaryColor)
+        if (container.color == 'secondary')
             ctx.fillStyle = GuiContainer.SECONDARY_COLOR;
+        if (container.color == 'space')
+            ctx.fillStyle = Global.BACKGROUND_COLOR;
         ctx.beginPath();
         ctx.roundRect(container.x, container.y, container.width, container.height, GuiContainer.ROUNDNESS);
         ctx.fill();

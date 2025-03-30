@@ -2,6 +2,7 @@ import { SelectButton } from "../controllers/SelectButton.js";
 import { Container } from "../interfaces/Container.js";
 import { ToggleButton } from "../controllers/ToggleButton.js";
 import { TextBox } from "../controllers/TextBox.js";
+import { Place } from "./Place.js";
 export class PlaceDisplay {
     static INITIAL_X = 80;
     static INITIAL_Y = 12;
@@ -33,7 +34,7 @@ export class PlaceDisplay {
     static pureObject(x) {
         return typeof x === "object" && !Array.isArray(x) && x !== null;
     }
-    static createQuality(global, key, variables, handleProperties = false, reset = false) {
+    static createQuality(global, key, variables, template, handleProperties = false, reset = false) {
         this.y++;
         const vars = reset ? () => variables().set.variables : () => variables();
         if (vars()[key] instanceof Array) {
@@ -42,8 +43,8 @@ export class PlaceDisplay {
         }
         else if (this.pureObject(vars()[key])) {
             if (handleProperties)
-                return this.handleProperties(global, () => vars()[key]);
-            return this.handleVariables(global, () => vars()[key]);
+                return this.handleProperties(global, () => vars()[key], template);
+            return this.handleVariables(global, () => vars()[key], key, template);
         }
         else if (typeof vars()[key] == "boolean") {
             this.x = 1;
@@ -80,7 +81,7 @@ export class PlaceDisplay {
         this.y += this.ARRAY_SEPERATION_Y;
         return container;
     }
-    static handleVariables(global, astroObject, reset = false) {
+    static handleVariables(global, astroObject, varsName, template, reset = false) {
         if (reset) {
             this.x = 0;
             this.y = this.VARIABLE_START;
@@ -91,12 +92,14 @@ export class PlaceDisplay {
         for (const key in vars()) {
             if (key == "variables")
                 continue;
-            const controller = this.createQuality(global, key, astroObject, false, reset);
+            const controller = this.createQuality(global, key, astroObject, template, false, reset);
+            console.log(key, varsName, !varsName);
+            this.PlaceButton(template, { [key]: controller }, varsName);
             controllers.push(controller);
         }
         return new Container(global, 0, 0, 0, 0).contain(controllers);
     }
-    static handleProperties(global, astroObject, reset = false) {
+    static handleProperties(global, astroObject, template, reset = false) {
         if (reset) {
             this.y = -this.START;
         }
@@ -106,7 +109,7 @@ export class PlaceDisplay {
                 continue;
             if (key == "position" || key == "velocity") {
                 this.y -= 0.5;
-                const controller = this.createQuality(global, key, astroObject, true);
+                const controller = this.createQuality(global, key, astroObject, template, true);
                 controllers.push(controller);
             }
         }
@@ -115,10 +118,20 @@ export class PlaceDisplay {
                 continue;
             if (key == "position" || key == "velocity")
                 continue;
-            const controller = this.createQuality(global, key, astroObject, true);
+            const controller = this.createQuality(global, key, astroObject, template, true);
+            this.PlaceButton(template, { [key]: controller });
             controllers.push(controller);
         }
         return new Container(global, 0, 0, 0, 0).contain(controllers);
+    }
+    static PlaceButton(template, object, varsName) {
+        if (varsName && !Place.buttons[template][varsName])
+            Place.buttons[template][varsName] = {};
+        if (varsName) {
+            Object.assign(Place.buttons[template][varsName], object);
+            return;
+        }
+        Object.assign(Place.buttons[template], object);
     }
     static handleBool(global, text, total) {
         return new ToggleButton(global, this.VARIABLE_X + this.seperation(total) * (this.x - 1), this.VARIABLE_Y +

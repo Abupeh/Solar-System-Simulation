@@ -24,6 +24,8 @@ export class TextBox implements Controller {
 
 	focused = false;
 
+	onUpdate = () => {};
+
 	public handleClick(x: number, y: number) {
 		if (this.focused) return this.complete();
 		if (!this.onBox(x, y)) return;
@@ -70,10 +72,12 @@ export class TextBox implements Controller {
 		if (this.type == "color") this.text = TextBox.checkRGB(this.text);
 		this.value = this.text;
 		if (this.type == "number") {
-            if(this.text.length == 0) this.text = "0";
+			if(this.text.length == 0) this.text = "0";
             this.value = new Number(this.text) as number;
         }
+		this.text = this.value.toString();
 		this.callback(this.value);
+		this.onUpdate();
 	}
 
 	value: string | number = "";

@@ -16,6 +16,7 @@ export class ActionButton extends Button {
         if (this.onButton(x, y) && !this.hold)
             this.callback(x, y);
         this.hold = false;
+        this.onUpdate();
     }
     onSelectClick(callback) {
         this.callback = () => (this.selectCallBack = (x, y) => {

@@ -8,20 +8,22 @@ import { AstroObjectDisplay } from "../display/animation/AstroObjectDisplay.js";
 import { Gui } from "../layout/container/Gui.js";
 import { Content } from "../content/Content.js";
 import { Tracker } from "../display/base/Tracker.js";
+import { AstroObject } from "../components/astro/AstroObject.js";
 
 export class Global {
 	static BACKGROUND_COLOR = "#000000";
 	static MAX_RATIO = 100;
+	static GUI_FRAMERATE = 100;
 
 	public event = new EventHandler();
 	public content: Content;
 	public canvas = document.getElementById("canvas") as HTMLCanvasElement;
 	public ctx = this.canvas.getContext("2d")!;
-	private astroObjectDisplay = new AstroObjectDisplay(this);
+	public astroObjectDisplay = new AstroObjectDisplay(this);
 	public camera = new Camera(this);
 	public cursor = new Cursor(this);
-	private time = new Time(this);
-	private trail = new Trail(this);
+	public time = new Time(this);
+	public trail = new Trail(this);
 	public tracker = new Tracker(this);
 
 	public ratioX = 0;
@@ -57,17 +59,30 @@ export class Global {
 		this.ctx.translate(x, y);
 	}
 
-	render() {
+	public renderPlace() {
+		this.ctx.save();
+		this.content.astroPlace.transform();
+		this.content.astroPlace.render(this.content.place.selected);
+		this.ctx.restore();
+	}
+
+	onStart = true;
+	render(): void {
+		if (this.onStart) {
+			this.onStart = false;
+			setInterval(this.guiUpdate.bind(this), Global.GUI_FRAMERATE);
+		}
 		this.reset();
 
 		if (this.time.iterations != 0) {
 			this.tracker.trackFollow();
-			this.time.update(this.universe, this.trail);
-			if(this.tracker.following) this.tracker.follow(this.tracker.following);
+			this.time.update(this.universe, this.trail, false);
+			if (this.tracker.following) this.tracker.follow(this.tracker.following);
 		}
 
 		this.cursor.followCamera(this.camera);
 		this.cursor.followControllers(this.content.controllers);
+
 		this.ctx.save();
 
 		this.transform();
@@ -80,8 +95,16 @@ export class Global {
 
 		this.gui.render();
 
+		this.renderPlace();
 		//Rerender
 		requestAnimationFrame(() => this.render());
+	}
+
+	guiUpdate() {
+		this.content.place.updateControllersToSelected(
+			this.content.create.Controllers,
+			this.content.place.selected.properties
+		);
 	}
 
 	static ToHex(rgb: number) {

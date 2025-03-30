@@ -1,5 +1,5 @@
 import { AstroProperties } from "../astro/AstroObject.d.js";
-import { AstroObject } from "../astro/AstroObject";
+import { AstroObject } from "../astro/AstroObject.js";
 
 export type AstroSetTypes = { type: string[] };
 

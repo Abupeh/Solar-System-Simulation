@@ -7,5 +7,6 @@ export class SelectButton extends ToggleButton {
         this.container.selectToggle();
         this.toggled = true;
         this.callback(x, y);
+        this.onUpdate();
     }
 }
