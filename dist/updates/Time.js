@@ -1,6 +1,6 @@
 export class Time {
     global;
-    static ITERATIONS = 3;
+    static ITERATIONS = 10;
     elapsed = 0;
     iterations = Time.ITERATIONS;
     pausedIterations = null; //? null means unpaused

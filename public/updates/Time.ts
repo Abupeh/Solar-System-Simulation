@@ -3,7 +3,7 @@ import { Global } from "../global/Global";
 import { Trail } from "../display/base/Trail";
 
 export class Time {
-	static ITERATIONS = 3;
+	static ITERATIONS = 10;
 
 	public elapsed = 0;
 	public iterations = Time.ITERATIONS;
