@@ -36,7 +36,7 @@ export class AstroObject {
 		surfaceTemperature: 0,
 		temperature: 0,
 		age: 0,
-		color: "#AABBCC",
+		color: "#AADDFF",
 
 		rings: {
 			rings: false,

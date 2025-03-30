@@ -5,7 +5,7 @@ export class Universe {
     name;
     format;
     static Default = "-B1.0$consice";
-    static Modern = "-L:vague$kinematic";
+    static Modern = "-L1.1$precise";
     astroObjects = [];
     constructor(name = "", format = Universe.Default) {
         this.name = name;
@@ -60,7 +60,6 @@ export class Universe {
         switch (version) {
             case "1.0":
             case ":vague":
-                return body;
             case "1.1":
                 return body;
         }
@@ -77,7 +76,9 @@ export class Universe {
                 break;
             case "precise":
                 const preciseAstroBody = body;
-                throw new Error("Precise-Format Not Supported");
+                const astroObject = new AstroObject(this.format, new Kinematics(new Vector(preciseAstroBody.kinematics.position.x, preciseAstroBody.kinematics.position.y), new Vector(preciseAstroBody.kinematics.velocity.x, preciseAstroBody.kinematics.velocity.y)));
+                Object.assign(astroObject.properties, structuredClone(preciseAstroBody.properties));
+                this.appendObject(astroObject);
         }
     }
     update(body) {
@@ -90,5 +91,22 @@ export class Universe {
     }
     appendObject(astroObject) {
         this.astroObjects.push(astroObject);
+    }
+    downloadUniverse() {
+        const astroObjects = this.astroObjects.map(({ trail, ...astroObject }) => astroObject);
+        return {
+            format: Universe.Modern,
+            AstroObjects: structuredClone(astroObjects),
+        };
+    }
+    download() {
+        const data = this.downloadUniverse();
+        const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "universe.json";
+        a.click();
+        URL.revokeObjectURL(url);
     }
 }

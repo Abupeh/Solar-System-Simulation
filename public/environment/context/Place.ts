@@ -40,8 +40,10 @@ export class Place {
 		properties: Properties = this.selected.properties
 	) {
 		for (const [key, value] of Object.entries(properties)) {
+			if(!(controllers[key as keyof Controllers])) continue;
+
 			if (typeof value == "string" || typeof value == "number") {
-				if((controllers[key as keyof Controllers]as TextBox).focused) continue;
+				if((controllers[key as keyof Controllers] as TextBox).focused) continue;
 
 				(controllers[key as keyof Controllers] as TextBox).value = value;
 				(controllers[key as keyof Controllers] as TextBox).text = value.toString();

@@ -3,14 +3,12 @@ import { Vector } from "../modules/Vector.js";
 import { Trail } from "../display/base/Trail.js";
 import type {
 	AstroData,
-	AstroDataTyped,
 	AstroProperties,
 	AstroTemplates,
 	ConsiceAstroData,
 	KinematicsAstroData,
 	KinematicsData,
 	PreciseAstroData,
-	VersionalAstroData,
 } from "../components/astro/AstroObject.d.js";
 
 import type {
@@ -27,7 +25,7 @@ import { AstroObject } from "../components/astro/AstroObject.js";
 type UniverseFolder = "tests" | "data";
 export class Universe {
 	static Default: UniverseFormat = "-B1.0$consice";
-	static Modern: UniverseFormat = "-L:vague$kinematic";
+	static Modern: UniverseFormat = "-L1.1$precise";
 
 	public astroObjects: AstroObject[] = [];
 	constructor(
@@ -80,25 +78,21 @@ export class Universe {
 		}
 	}
 
-	private appendBody(body: VersionalAstroData, format: OrganizedFormat) {
+	private appendBody(body: AstroData, format: OrganizedFormat) {
 		const astroObject = this.assertBodyVersion(body, format[1]);
 		this.appendBodyProperty(astroObject, format[2]);
 	}
 
-	private assertBodyVersion(body: VersionalAstroData, version: VersionFormat) {
+	private assertBodyVersion(body: AstroData, version: VersionFormat) {
 		switch (version) {
 			case "1.0":
 			case ":vague":
-				return body as AstroData;
 			case "1.1":
-				return body as AstroDataTyped;
+				return body as AstroData;
 		}
 	}
 
-	private appendBodyProperty(
-		body: VersionalAstroData,
-		property: PropertyFormat
-	) {
+	private appendBodyProperty(body: AstroData, property: PropertyFormat) {
 		switch (property) {
 			case "consice":
 				const consiceAstroBody = body as ConsiceAstroData;
@@ -110,7 +104,24 @@ export class Universe {
 				break;
 			case "precise":
 				const preciseAstroBody = body as PreciseAstroData;
-				throw new Error("Precise-Format Not Supported");
+				const astroObject = new AstroObject(
+					this.format,
+					new Kinematics(
+						new Vector(
+							preciseAstroBody.kinematics.position.x,
+							preciseAstroBody.kinematics.position.y
+						),
+						new Vector(
+							preciseAstroBody.kinematics.velocity.x,
+							preciseAstroBody.kinematics.velocity.y
+						)
+					)
+				);
+				Object.assign(
+					astroObject.properties,
+					structuredClone(preciseAstroBody.properties)
+				);
+				this.appendObject(astroObject);
 		}
 	}
 
@@ -135,5 +146,26 @@ export class Universe {
 
 	appendObject(astroObject: AstroObject) {
 		this.astroObjects.push(astroObject);
+	}
+
+	downloadUniverse() {
+		const astroObjects = this.astroObjects.map(
+			({ trail, ...astroObject }) => astroObject
+		);
+		return {
+			format: Universe.Modern,
+			AstroObjects: structuredClone(astroObjects),
+		};
+	}
+
+	download() {
+		const data = this.downloadUniverse();
+		const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement("a");
+		a.href = url;
+		a.download = "universe.json";
+		a.click();
+		URL.revokeObjectURL(url);
 	}
 }

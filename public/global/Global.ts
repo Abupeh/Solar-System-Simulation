@@ -70,7 +70,7 @@ export class Global {
 	render(): void {
 		if (this.onStart) {
 			this.onStart = false;
-			setInterval(this.guiUpdate.bind(this), Global.GUI_FRAMERATE);
+			setInterval(() => this.guiUpdate(), Global.GUI_FRAMERATE);
 		}
 		this.reset();
 
@@ -101,6 +101,7 @@ export class Global {
 	}
 
 	guiUpdate() {
+		if(this.content.place.selected)
 		this.content.place.updateControllersToSelected(
 			this.content.create.Controllers,
 			this.content.place.selected.properties

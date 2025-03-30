@@ -59,7 +59,7 @@ export class Global {
     render() {
         if (this.onStart) {
             this.onStart = false;
-            setInterval(this.guiUpdate.bind(this), Global.GUI_FRAMERATE);
+            setInterval(() => this.guiUpdate(), Global.GUI_FRAMERATE);
         }
         this.reset();
         if (this.time.iterations != 0) {
@@ -84,7 +84,8 @@ export class Global {
         requestAnimationFrame(() => this.render());
     }
     guiUpdate() {
-        this.content.place.updateControllersToSelected(this.content.create.Controllers, this.content.place.selected.properties);
+        if (this.content.place.selected)
+            this.content.place.updateControllersToSelected(this.content.create.Controllers, this.content.place.selected.properties);
     }
     static ToHex(rgb) {
         const hex = rgb.toString(16);

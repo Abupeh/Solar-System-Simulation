@@ -1,4 +1,4 @@
-import { Astro } from "./AstroObject";
+import { Astro, AstroObject } from "./AstroObject";
 
 export type AstroTemplates = keyof typeof Astro;
 
@@ -22,17 +22,12 @@ export interface ConsiceAstroData {
 	velocity: [number, number];
 }
 
-//!Later
-export interface PreciseAstroData {}
+export type PreciseAstroData = AstroObject;
 
 export type AstroData =
 	| KinematicsAstroData
 	| ConsiceAstroData
 	| PreciseAstroData;
-
-export type AstroDataTyped = AstroData & { types: string[] };
-
-export type VersionalAstroData = AstroData | AstroDataTyped;
 
 export interface AstroProperties {
 	name?: string;

@@ -1,7 +1,7 @@
 import { Universe } from "./core/Universe.js";
 import { Global } from "./global/Global.js";
-const universe = new Universe("Solar-System", "-B1.1$consice");
-await universe.import("test7", "tests");
+const universe = new Universe("Solar-System");
+await universe.import("modern_universe", "data");
 const global = new Global(universe);
 global.render();
 setInterval(() => {

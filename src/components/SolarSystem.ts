@@ -43,7 +43,7 @@ export class SolarSystem {
 		if (body instanceof BlackHole) return "blackholes";
 		return "planets";
 	}
-	collectData() {
+	downloadSolarSystem() {
 		const data: SystemData = {
 			stars: [],
 			planets: [],
@@ -67,7 +67,7 @@ export class SolarSystem {
 	}
 
 	download() {
-		const data = this.collectData();
+		const data = this.downloadSolarSystem();
 		const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement("a");

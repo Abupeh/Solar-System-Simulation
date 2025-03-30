@@ -25,20 +25,28 @@ export class Content {
         this.appendControllers(...astroPlaceGui, sideContainer, ...this.create.controllerList);
         this.create.place(sideContainer);
     }
-    followingNumber = 0;
+    clearReferenceTrails() {
+        if (this.global.tracker.reference) {
+            this.universe.astroObjects.forEach((astroObject) => {
+                astroObject.trail = [];
+            });
+        }
+    }
+    followingNumber = 1;
     createButtons() {
         const Place = new ActionButton(this.global, 7, 5, 5, 5, "+").onSelectClick((position) => {
             this.place.placeSelected(position);
             this.global.guiUpdate();
         });
         this.appendControllers(Place);
-        const Reference = new ToggleButton(this.global, 7, 11, 5, 5, "R").onClick((pos) => {
+        const Reference = new ToggleButton(this.global, 7, 11, 5, 5, "Reference").onClick((pos) => {
             this.global.tracker.toggleReference(this.universe.astroObjects);
         });
         this.appendControllers(Reference);
         const FollowUp = new ActionButton(this.global, 13, 11, 5, 5, ">").onClick(() => {
             if (!this.global.tracker.following)
                 return;
+            this.clearReferenceTrails();
             if (this.universe.astroObjects.length <= this.followingNumber) {
                 this.followingNumber = 0;
             }
@@ -50,6 +58,7 @@ export class Content {
         const FollowDown = new ActionButton(this.global, 1, 11, 5, 5, "<").onClick(() => {
             if (!this.global.tracker.following)
                 return;
+            this.clearReferenceTrails();
             if (this.followingNumber < 0)
                 this.followingNumber = this.universe.astroObjects.length - 1;
             this.global.tracker.following =
@@ -57,11 +66,8 @@ export class Content {
             this.followingNumber--;
         });
         this.appendControllers(FollowDown);
-        const EndFollow = new ToggleButton(this.global, 7, 17, 5, 5, "F")
+        const EndFollow = new ToggleButton(this.global, 7, 17, 5, 5, "Follow")
             .onClick(() => {
-            this.universe.astroObjects.forEach((astroObject) => {
-                astroObject.trail = [];
-            });
             if (this.global.tracker.following)
                 return (this.global.tracker.following = undefined);
             this.global.tracker.following = this.universe.astroObjects[0];
@@ -69,6 +75,15 @@ export class Content {
             .toggle();
         EndFollow.defaultClick();
         this.appendControllers(EndFollow);
+        const SelectObject = new ActionButton(this.global, 13, 17, 5, 5, "Select").onClick(() => {
+            if (this.global.tracker.following)
+                this.place.selected = this.global.tracker.following;
+        });
+        this.appendControllers(SelectObject);
+        const Download = new ActionButton(this.global, 1, 5, 5, 5, "Download").onClick(() => {
+            this.universe.download();
+        });
+        this.appendControllers(Download);
     }
     appendControllers(...controllers) {
         this.controllers.push(...controllers);

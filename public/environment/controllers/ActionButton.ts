@@ -21,7 +21,6 @@ export class ActionButton extends Button {
 
 		this.hold = false;
 		this.onUpdate();
-
 	}
 
 	onSelectClick(callback: (position: [number, number]) => void) {

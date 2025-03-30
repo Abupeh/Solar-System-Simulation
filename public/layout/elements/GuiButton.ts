@@ -7,8 +7,9 @@ import { ToggleButton } from "../../environment/controllers/ToggleButton.js";
 export class GuiButton extends GuiElement {
 	static ROUNDNESS = 5;
 	static COLOR = "#31313188";
-	static TOGGLE_COLOR = "#52525288";
+	static TOGGLE_COLOR = "#55555588";
 
+	static HOVER_COLOR = "#42424288";
 	static TEXT_COLOR = "#CED4DBDD";
 	static FONT_SIZE = 11;
 	static SECOND_FONT_SIZE = 13;
@@ -30,6 +31,7 @@ export class GuiButton extends GuiElement {
 
 	drawBase(button: Button, ctx = this.global.ctx) {
 		ctx.fillStyle = GuiButton.COLOR;
+		if(button.hover) ctx.fillStyle = GuiButton.HOVER_COLOR;
 		if (button instanceof ActionButton && button.isSelected())
 			ctx.fillStyle = GuiButton.TOGGLE_COLOR;
 		if (button instanceof ToggleButton && button.toggled)

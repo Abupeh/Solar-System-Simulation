@@ -21,6 +21,8 @@ export class Place {
     }
     updateControllersToSelected(controllers, properties = this.selected.properties) {
         for (const [key, value] of Object.entries(properties)) {
+            if (!(controllers[key]))
+                continue;
             if (typeof value == "string" || typeof value == "number") {
                 if (controllers[key].focused)
                     continue;

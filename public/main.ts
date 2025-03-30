@@ -2,9 +2,9 @@ import { Universe } from "./core/Universe.js";
 import { Camera } from "./display/base/Camera.js";
 import { Global } from "./global/Global.js";
 
-const universe = new Universe("Solar-System", "-B1.1$consice");
+const universe = new Universe("Solar-System");
 
-await universe.import("test7", "tests");
+await universe.import("modern_universe", "data");
 
 const global = new Global(universe);
 global.render();

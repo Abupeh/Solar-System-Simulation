@@ -4,8 +4,9 @@ import { TextBox } from "../../environment/controllers/TextBox.js";
 export class GuiTextBox extends GuiElement {
 	static ROUNDNESS = 5;
 	static COLOR = "#28282888";
-	static FOCUSED_COLOR = "#52525288";
+	static FOCUSED_COLOR = "#55555588";
 
+	static HOVER_COLOR = "#32323288";
 	static TEXT_COLOR = "#CED4DBDD";
 	static FONT_SIZE = 12;
 	static FONT_QUALITY = "";
@@ -31,6 +32,7 @@ export class GuiTextBox extends GuiElement {
 
 	drawBase(textbox: TextBox, ctx = this.global.ctx) {
 		ctx.fillStyle = GuiTextBox.COLOR;
+		if(textbox.hover) ctx.fillStyle = GuiTextBox.HOVER_COLOR;
 		if (textbox.focused) ctx.fillStyle = GuiTextBox.FOCUSED_COLOR;
 		ctx.beginPath();
 		ctx.roundRect(
