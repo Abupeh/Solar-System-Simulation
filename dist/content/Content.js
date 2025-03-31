@@ -5,6 +5,8 @@ import { Create } from "../environment/context/Create.js";
 import { AstroObject } from "../components/astro/AstroObject.js";
 import { Place } from "../environment/context/Place.js";
 import { AstroPlace } from "../environment/context/AstroPlace.js";
+import { TextBox } from "../environment/controllers/TextBox.js";
+import { Kinematics } from "../modules/Kinematics.js";
 export class Content {
     global;
     universe;
@@ -70,7 +72,8 @@ export class Content {
             .onClick(() => {
             if (this.global.tracker.following)
                 return (this.global.tracker.following = undefined);
-            this.global.tracker.following = this.universe.astroObjects[this.followingNumber];
+            this.global.tracker.following =
+                this.universe.astroObjects[this.followingNumber];
         })
             .toggle();
         EndFollow.defaultClick();
@@ -84,7 +87,14 @@ export class Content {
             this.universe.download();
         });
         this.appendControllers(Download);
+        this.TimeTextBox = new TextBox(this.global, 7, 23, 5, 5, this.global.time.iterations.toString(), "Iterations", "number").onChange((value) => (this.global.time.iterations = value));
+        this.appendControllers(this.TimeTextBox);
+        const Force = new TextBox(this.global, 8, 30, 6, 4, Kinematics.UNIVERSAL_FORCE.toString(), "Universal Force", "number").onChange((value) => (Kinematics.UNIVERSAL_FORCE = value));
+        this.appendControllers(Force);
+        const Velocity = new TextBox(this.global, 8, 35, 6, 4, Kinematics.UNIVERSAL_VELOCITY.toString(), "Universal Velocity", "number").onChange((value) => (Kinematics.UNIVERSAL_VELOCITY = value));
+        this.appendControllers(Velocity);
     }
+    TimeTextBox;
     appendControllers(...controllers) {
         this.controllers.push(...controllers);
         controllers.forEach((controller) => {

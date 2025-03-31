@@ -16,9 +16,9 @@ export class Universe {
             astroObject.update(this.astroObjects);
         });
     }
-    updateTrails(trail, iterate) {
+    updateTrails(trail) {
         this.astroObjects.forEach((astroObject) => {
-            trail.updateTrail(astroObject, iterate);
+            trail.updateTrail(astroObject);
         });
     }
     async import(json, from = "data") {
@@ -90,6 +90,22 @@ export class Universe {
         this.astroObjects.push(astroObject);
     }
     appendObject(astroObject) {
+        for (const property in AstroObject.properties) {
+            const value = AstroObject.properties[property];
+            if (typeof value === "object" && !(value instanceof Array))
+                for (const subProperty in value) {
+                    const subObject = astroObject.properties[property];
+                    if (typeof subObject !== "object" || subObject instanceof Array)
+                        continue;
+                    if (subProperty in subObject)
+                        continue;
+                    //@ts-ignore
+                    Object.assign(astroObject.properties[property], {
+                        //@ts-ignore
+                        [subProperty]: value[subProperty]
+                    });
+                }
+        }
         this.astroObjects.push(astroObject);
     }
     downloadUniverse() {

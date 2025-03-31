@@ -25,15 +25,19 @@ export class GuiTextBox extends GuiElement {
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
 
+		let text = textbox.text;
 		if (textbox.type == "number") {
-			textbox.text = (
-				Math.floor((new Number(textbox.text) as number) * GuiTextBox.DECIMAL_ALLOWANCE) /
-				GuiTextBox.DECIMAL_ALLOWANCE
+			text = (
+				Math.floor(
+					(new Number(textbox.text) as number) * GuiTextBox.DECIMAL_ALLOWANCE
+				) / GuiTextBox.DECIMAL_ALLOWANCE +
+				(textbox.text.endsWith(".") ? "." : "")
 			).toString() as TextBoxType;
 		}
 
 		ctx.fillText(
-			textbox.text + (textbox.percent ? "%" : ""),
+			text +
+				(textbox.percent ? "%" : ""),
 			textbox.x + textbox.width / 2,
 			textbox.y + textbox.height / 2
 		);

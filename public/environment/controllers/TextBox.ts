@@ -13,7 +13,7 @@ export class TextBox implements Controller {
 		public displayText: string,
 		public type: TextBoxType
 	) {
-        this.text = this.text.toString();
+		this.text = this.text.toString();
 		this.global.event.onclick(this.handleClick.bind(this));
 		document.addEventListener("keydown", this.handleKeyDown.bind(this));
 		this.global.event.onmousemove(this.handleHover.bind(this));
@@ -35,11 +35,11 @@ export class TextBox implements Controller {
 		this.focused = !this.focused;
 	}
 	static checkRGB(rgb: string) {
-        rgb = rgb.replaceAll(/[^0-9a-fA-F]/gi, "a");
-		if (rgb[0] != "#") rgb = '#' + rgb.slice(1);
+		rgb = rgb.replaceAll(/[^0-9a-fA-F]/gi, "a");
+		if (rgb[0] != "#") rgb = "#" + rgb.slice(1);
 		if (rgb.length < 7) rgb = rgb.padEnd(7, "a");
 		if (rgb.length > 7) rgb = rgb.slice(0, 7);
-		return rgb
+		return rgb;
 	}
 
 	onChange(callback: (value: string | number) => void) {
@@ -49,19 +49,23 @@ export class TextBox implements Controller {
 
 	callback: (value: string | number) => void = () => {};
 
-    static checkAllowed(text: string) {
-        return text.replaceAll(/[^0-9a-zA-Z\.]/gi, "");
-    }
+	static checkAllowed(text: string) {
+		return text.replaceAll(/[^0-9a-zA-Z\.]/gi, "");
+	}
 	public handleKeyDown(event: KeyboardEvent) {
 		if (!this.focused) return;
-        this.text = TextBox.checkAllowed(this.text);
+		this.text = TextBox.checkAllowed(this.text);
 		if (event.key == "Backspace") this.text = this.text.slice(0, -1);
 		if (event.key == "Enter") this.complete();
 		if (this.type == "number") {
+			if (event.key == "-") this.text = ((this.value as number) * -1).toString();
+			if(event.key == '.') if(!this.text.includes('.')) {
+				this.text += '.'
+			};
 			if (event.key < "0" || event.key > "9") return;
 		}
 
-        if(this.type == "color" && this.text[0] != '#') this.text = "#" + this.text;
+		if (this.type == "color" && this.text[0] != "#") this.text = "#" + this.text;
 
 		if (event.key.length > 1) return;
 		this.text += event.key;
@@ -74,9 +78,9 @@ export class TextBox implements Controller {
 		if (this.type == "color") this.text = TextBox.checkRGB(this.text);
 		this.value = this.text;
 		if (this.type == "number") {
-			if(this.text.length == 0) this.text = "0";
-            this.value = new Number(this.text) as number;
-        }
+			if (this.text.length == 0) this.text = "0";
+			this.value = new Number(this.text) as number;
+		}
 		this.text = this.value.toString();
 		this.callback(this.value);
 		this.onUpdate();

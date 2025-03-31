@@ -2,9 +2,9 @@ import { Vector } from "./Vector.js";
 export class Kinematics {
     position;
     velocity;
-    static GRAVITATIONAL_CONSTANT = 0.0087;
-    static FORCE_AMPLITUDE = 10;
-    static VELOCITY_AMPLITUDE = 20;
+    static UNIVERSAL_GRAVITY = 0.0087;
+    static UNIVERSAL_FORCE = 10;
+    static UNIVERSAL_VELOCITY = 20;
     constructor(position = new Vector(0, 0), velocity = new Vector(0, 0)) {
         this.position = position;
         this.velocity = velocity;
@@ -17,15 +17,16 @@ export class Kinematics {
             const distance = Vector.distance(kinematics.position, this.position);
             const force = Vector.normalize(distance);
             force
-                .scale(Kinematics.GRAVITATIONAL_CONSTANT *
+                .scale(Kinematics.UNIVERSAL_GRAVITY *
                 thisObject.properties.mass *
                 properties.mass *
                 properties.gravity)
                 .scale(1 / distance.magnitude)
                 .scale(1 / thisObject.properties.mass)
-                .scale(Kinematics.FORCE_AMPLITUDE);
+                .scale(Kinematics.UNIVERSAL_FORCE);
             this.velocity.add(force);
-            thisObject.properties.spin -= (force.x + force.y) * thisObject.properties.density;
+            thisObject.properties.spin -=
+                (force.x + force.y) * thisObject.properties.density;
             surfaceTemperature +=
                 properties.luminosity /
                     (distance.magnitude / thisObject.properties.radius ** 2);
@@ -33,12 +34,14 @@ export class Kinematics {
                 (properties.magneticField * thisObject.properties.metallicity) /
                     (distance.magnitude /
                         thisObject.properties.radius ** 2 /
-                        Kinematics.GRAVITATIONAL_CONSTANT);
+                        Kinematics.UNIVERSAL_GRAVITY);
+            thisObject.properties.charge += Math.abs(surfaceTemperature * thisObject.properties.radius);
         }
         thisObject.properties.coreTemperature +=
             (-thisObject.properties.coreTemperature +
-                (thisObject.properties.charge / thisObject.properties.radius) *
-                    thisObject.properties.nucleusSize) /
+                thisObject.properties.charge *
+                    ((thisObject.properties.nucleusSize / thisObject.properties.radius) *
+                        Kinematics.UNIVERSAL_GRAVITY)) /
                 2;
         thisObject.properties.surfaceTemperature +=
             (-thisObject.properties.surfaceTemperature +
@@ -47,16 +50,15 @@ export class Kinematics {
                 thisObject.properties.atmosphere.pressure * thisObject.properties.density) /
                 2;
         thisObject.properties.density +=
-            (-thisObject.properties.density +
-                ((thisObject.properties.mass / thisObject.properties.radius) * 100) / 100) /
-                2;
+            -thisObject.properties.density +
+                thisObject.properties.mass / thisObject.properties.radius / 2;
         if (thisObject.properties.spin > 360)
             thisObject.properties.spin = 0;
         if (thisObject.properties.spin < 0)
             thisObject.properties.spin = 360;
     }
     applyPositionalForce() {
-        const velocity = Vector.amplitude(this.velocity, Kinematics.VELOCITY_AMPLITUDE);
+        const velocity = Vector.amplitude(this.velocity, Kinematics.UNIVERSAL_VELOCITY);
         this.position.add(velocity);
     }
 }

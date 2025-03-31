@@ -21,6 +21,7 @@ import type {
 	VersionFormat,
 } from "./Universe.d.js";
 import { AstroObject } from "../components/astro/AstroObject.js";
+import { ObjectKeys } from "../environment/context/Create.js";
 
 type UniverseFolder = "tests" | "data";
 export class Universe {
@@ -39,9 +40,9 @@ export class Universe {
 		});
 	}
 
-	updateTrails(trail: Trail, iterate: boolean) {
+	updateTrails(trail: Trail) {
 		this.astroObjects.forEach((astroObject) => {
-			trail.updateTrail(astroObject, iterate);
+			trail.updateTrail(astroObject);
 		});
 	}
 
@@ -143,6 +144,22 @@ export class Universe {
 	}
 
 	appendObject(astroObject: AstroObject) {
+		for (const property in AstroObject.properties) {
+			const value =
+				AstroObject.properties[property as keyof typeof AstroObject.properties];
+			if (typeof value === "object" && !(value instanceof Array))
+				for (const subProperty in value) {
+					const subObject =
+						astroObject.properties[property as keyof typeof astroObject.properties];
+					if (typeof subObject !== "object" || subObject instanceof Array) continue;
+					if (subProperty in subObject) continue;
+					//@ts-ignore
+					Object.assign(astroObject.properties[property], {
+						//@ts-ignore
+						[subProperty]: value[subProperty]
+					});
+				}
+		}
 		this.astroObjects.push(astroObject);
 	}
 

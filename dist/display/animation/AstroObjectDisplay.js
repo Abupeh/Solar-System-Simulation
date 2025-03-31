@@ -1,13 +1,22 @@
 import { GuiElement } from "../../layout/class/GuiElement.js";
 export class AstroObjectDisplay {
     global;
-    static GRADIENT_FADE = "ff";
-    static GRADIENT_EFFECT = "bb";
+    static GRADIENT_FADE = "bb";
+    static GRADIENT_EFFECT = "dd";
     static SHADOW_COLOR = "#ffffff";
     static SHADOW_BLUR = 0.5;
     static textColor = "#ffffff";
     static textOffset = 1.5;
     static ZOOM_QUALITY = 0.1;
+    static atmosphericColor = {
+        N2: "#ADD8E6",
+        O2: "#90EE90",
+    };
+    static ringColor = {
+        Ice: "#b9e8ea",
+        Rock: "#C19D74",
+        Dust: "#CCB998",
+    };
     constructor(global) {
         this.global = global;
     }
@@ -17,7 +26,7 @@ export class AstroObjectDisplay {
         this.global.ctx.save();
         this.global.ctx.beginPath();
         this.renderText(astroObjectDisplay, zero);
-        this.renderBody(astroObjectDisplay, zero, astroObject.properties.radius, gradient);
+        this.renderBody(astroObjectDisplay, zero, gradient);
         this.global.ctx.fill();
         this.renderRing(astroObjectDisplay, astroObject.properties.radius, zero);
         this.global.ctx.restore();
@@ -38,8 +47,8 @@ export class AstroObjectDisplay {
     }
     createGradient({ kinematics: { position: { x, y }, }, properties: { radius, color }, }) {
         const gradient = this.global.ctx.createRadialGradient(x, y, 0, x, y, radius);
-        gradient.addColorStop(0, color + AstroObjectDisplay.GRADIENT_EFFECT);
-        gradient.addColorStop(1, color + AstroObjectDisplay.GRADIENT_FADE);
+        gradient.addColorStop(0, color + AstroObjectDisplay.GRADIENT_FADE);
+        gradient.addColorStop(1, color + AstroObjectDisplay.GRADIENT_EFFECT);
         return gradient;
     }
     renderText({ kinematics: { position: { x, y }, }, properties: { radius, name }, }, zero = false) {
@@ -49,7 +58,7 @@ export class AstroObjectDisplay {
         const offset = AstroObjectDisplay.textOffset * radius;
         this.global.ctx.fillText(name, x, y + (zero ? -offset : offset));
     }
-    renderRing({ kinematics: { position: { x, y }, }, properties: { luminosity, radius, rings: { rings, color, distance, thickness }, spin, }, }, originalRadius, zero = false) {
+    renderRing({ kinematics: { position: { x, y }, }, properties: { luminosity, radius, rings: { rings, color, distance, thickness, composition }, spin, }, }, originalRadius, zero = false) {
         if (!rings)
             return;
         this.global.ctx.save();
@@ -66,19 +75,30 @@ export class AstroObjectDisplay {
         this.global.ctx.ellipse(0, 0, innerRadius - (radius + zeroThickness), innerRadius, 0, 0, Math.PI * 2);
         this.global.ctx.ellipse(0, 0, outerRadius - (radius + zeroThickness), outerRadius + zeroThickness * 2, 0, 0, Math.PI * 2, true);
         this.global.ctx.closePath();
-        this.global.ctx.fillStyle = color + "55";
+        const ringGradient = this.createCompositionalGradient(0, 0, outerRadius, color, composition, AstroObjectDisplay.ringColor);
+        this.global.ctx.fillStyle = ringGradient;
         this.global.ctx.fill();
         this.global.ctx.restore();
     }
-    renderBody({ kinematics: { position: { x, y }, }, properties: { radius, luminosity, atmosphere: { atmosphere, color }, }, }, zero = false, originalRadius, gradient) {
+    renderBody({ kinematics: { position: { x, y }, }, properties: { radius, luminosity, atmosphere: { atmosphere, color, composition }, }, }, zero = false, gradient) {
         this.global.ctx.arc(x, y, radius, 0, 2 * Math.PI);
         this.global.ctx.fillStyle = gradient;
         this.global.ctx.shadowColor = "#ffffffaa";
-        this.global.ctx.shadowBlur = zero
-            ? luminosity / 3
-            : luminosity;
+        this.global.ctx.shadowBlur = zero ? luminosity / 3 : luminosity;
         if (!atmosphere)
             return;
+        const atmosphericGradient = this.createCompositionalGradient(x, y, radius, color, composition);
+        this.global.ctx.fillStyle = atmosphericGradient;
         this.global.ctx.shadowColor = color;
+    }
+    createCompositionalGradient(x, y, radius, color, composition, compositionBase = AstroObjectDisplay.atmosphericColor) {
+        const atmosphericGradient = this.global.ctx.createRadialGradient(x, y, 0, x, y, radius);
+        atmosphericGradient.addColorStop(0, color + AstroObjectDisplay.GRADIENT_EFFECT);
+        atmosphericGradient.addColorStop(1 / (composition.length + 1), color + AstroObjectDisplay.GRADIENT_FADE);
+        composition.forEach((element, index) => {
+            atmosphericGradient.addColorStop((index + 2) / (composition.length + 1), compositionBase[element] +
+                AstroObjectDisplay.GRADIENT_FADE);
+        });
+        return atmosphericGradient;
     }
 }

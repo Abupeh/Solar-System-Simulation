@@ -16,11 +16,13 @@ export class GuiTextBox extends GuiElement {
         ctx.fillText(textbox.displayText, textbox.x - textbox.width * 1.25 + GuiTextBox.FONT_SIZE, textbox.y + textbox.height / 2);
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
+        let text = textbox.text;
         if (textbox.type == "number") {
-            textbox.text = (Math.floor(new Number(textbox.text) * GuiTextBox.DECIMAL_ALLOWANCE) /
-                GuiTextBox.DECIMAL_ALLOWANCE).toString();
+            text = (Math.floor(new Number(textbox.text) * GuiTextBox.DECIMAL_ALLOWANCE) / GuiTextBox.DECIMAL_ALLOWANCE +
+                (textbox.text.endsWith(".") ? "." : "")).toString();
         }
-        ctx.fillText(textbox.text + (textbox.percent ? "%" : ""), textbox.x + textbox.width / 2, textbox.y + textbox.height / 2);
+        ctx.fillText(text +
+            (textbox.percent ? "%" : ""), textbox.x + textbox.width / 2, textbox.y + textbox.height / 2);
     }
     drawBase(textbox, ctx = this.global.ctx) {
         ctx.fillStyle = GuiTextBox.COLOR;

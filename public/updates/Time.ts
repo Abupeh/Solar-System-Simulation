@@ -14,18 +14,11 @@ export class Time {
 		this.global.event.keydown("ArrowDown", this.slowDown.bind(this));
 	}
 
-	update(universe: Universe, trail: Trail, iterate: boolean) {
-		if (iterate) {
-			for (let i = 0; i < this.iterations; i++) {
-				universe.updateAstroObjects();
-				universe.updateTrails(trail, iterate);
-			}
-			return;
-		}
+	update(universe: Universe, trail: Trail) {
 		for (let i = 0; i < this.iterations; i++) {
 			universe.updateAstroObjects();
 		}
-		if (this.iterations != 0) universe.updateTrails(trail, iterate);
+		if (this.iterations != 0) universe.updateTrails(trail);
 	}
 
 	onUnPauseCallback = () => {};
@@ -33,7 +26,7 @@ export class Time {
 		this.onUnPauseCallback = callback;
 	}
 	pause(forcePause = false) {
-		if (!this.pausedIterations || forcePause) {
+		if (!this.pausedIterations || forcePause || (this.iterations != 0)) {
 			if (this.iterations) this.pausedIterations = this.iterations;
 			this.iterations = 0;
 			return;

@@ -37,7 +37,7 @@ export class TextBox {
     static checkRGB(rgb) {
         rgb = rgb.replaceAll(/[^0-9a-fA-F]/gi, "a");
         if (rgb[0] != "#")
-            rgb = '#' + rgb.slice(1);
+            rgb = "#" + rgb.slice(1);
         if (rgb.length < 7)
             rgb = rgb.padEnd(7, "a");
         if (rgb.length > 7)
@@ -61,10 +61,17 @@ export class TextBox {
         if (event.key == "Enter")
             this.complete();
         if (this.type == "number") {
+            if (event.key == "-")
+                this.text = (this.value * -1).toString();
+            if (event.key == '.')
+                if (!this.text.includes('.')) {
+                    this.text += '.';
+                }
+            ;
             if (event.key < "0" || event.key > "9")
                 return;
         }
-        if (this.type == "color" && this.text[0] != '#')
+        if (this.type == "color" && this.text[0] != "#")
             this.text = "#" + this.text;
         if (event.key.length > 1)
             return;

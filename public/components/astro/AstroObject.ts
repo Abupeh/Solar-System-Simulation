@@ -22,15 +22,16 @@ export class AstroObject {
 		color: "#AADDFF",
 
 		rings: {
-			rings: true,
-			color: "#c9c9c9",
-			distance: 100,
-			thickness: 10,
+			rings: false,
+			composition: ["Ice", "Rock", "Dust"],
+			color: "#99ccdd",
+			distance: 450,
+			thickness: 350,
 		},
 		atmosphere: {
-			atmosphere: true,
+			atmosphere: false,
 			composition: ["N2", "O2"],
-			color: "#fdfdfd",
+			color: "#8877dd",
 			density: 100,
 			pressure: 1000,
 		},
@@ -45,7 +46,7 @@ export class AstroObject {
 		luminosity: 12,
 		metallicity: 0,
 		windSpeed: 0,
-		nucleusSize: 4,
+		nucleusSize: 40,
 		habitableZone: {
 			habitableZone: false,
 			inner: 0,
@@ -69,15 +70,20 @@ export class AstroObject {
 	public properties: AstroProperties = structuredClone(AstroObject.properties);
 
 	constructor(public kinematics: Kinematics) {
+		Object.assign(this.properties, structuredClone(AstroObject.properties));
 		this.properties.name ||= AstroObject.createName();
 	}
 
 	update(astroObjects: AstroObject[]) {
 		this.kinematics.applyGravitationalForce(astroObjects, this);
 		this.kinematics.applyPositionalForce();
-		this.properties.age += Kinematics.GRAVITATIONAL_CONSTANT / 10;
+		this.properties.age += Kinematics.UNIVERSAL_GRAVITY / 10;
 		this.calculateHabitability();
-		this.lostCharge += this.properties.luminosity;
+		this.lostCharge +=
+			(this.properties.luminosity +
+				this.properties.magneticField +
+				this.properties.atmosphere.pressure) *
+			Kinematics.UNIVERSAL_GRAVITY;
 		this.properties.charge =
 			this.properties.mass * this.properties.radius - this.lostCharge;
 	}

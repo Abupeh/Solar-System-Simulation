@@ -10,26 +10,19 @@ export class Time {
         this.global.event.keydown("ArrowUp", this.speedUp.bind(this));
         this.global.event.keydown("ArrowDown", this.slowDown.bind(this));
     }
-    update(universe, trail, iterate) {
-        if (iterate) {
-            for (let i = 0; i < this.iterations; i++) {
-                universe.updateAstroObjects();
-                universe.updateTrails(trail, iterate);
-            }
-            return;
-        }
+    update(universe, trail) {
         for (let i = 0; i < this.iterations; i++) {
             universe.updateAstroObjects();
         }
         if (this.iterations != 0)
-            universe.updateTrails(trail, iterate);
+            universe.updateTrails(trail);
     }
     onUnPauseCallback = () => { };
     onUnPause(callback) {
         this.onUnPauseCallback = callback;
     }
     pause(forcePause = false) {
-        if (!this.pausedIterations || forcePause) {
+        if (!this.pausedIterations || forcePause || (this.iterations != 0)) {
             if (this.iterations)
                 this.pausedIterations = this.iterations;
             this.iterations = 0;

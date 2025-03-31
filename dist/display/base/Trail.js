@@ -10,10 +10,9 @@ export class Trail {
     constructor(global) {
         this.global = global;
     }
-    updateTrail(astroObject, iterate, { followingX, followingY } = this.global.tracker) {
-        if (!iterate)
-            if (astroObject.trail.length > Trail.TRAIL_LENGTH)
-                astroObject.trail.shift();
+    updateTrail(astroObject, { followingX, followingY } = this.global.tracker) {
+        if (astroObject.trail.length > Trail.TRAIL_LENGTH)
+            astroObject.trail.shift();
         astroObject.trail.push([
             astroObject.kinematics.position.x + followingX(),
             astroObject.kinematics.position.y + followingY(),

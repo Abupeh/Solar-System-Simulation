@@ -63,7 +63,7 @@ export class Global {
         }
         this.reset();
         if (this.time.iterations != 0) {
-            this.time.update(this.universe, this.trail, false);
+            this.time.update(this.universe, this.trail);
             if (this.tracker.following)
                 this.tracker.follow(this.tracker.following);
         }
@@ -85,6 +85,8 @@ export class Global {
     guiUpdate() {
         if (this.content.place.selected)
             this.content.place.updateControllersToSelected(this.content.create.Controllers, this.content.place.selected.properties);
+        if (this.content.TimeTextBox && !this.content.TimeTextBox.focused)
+            this.content.TimeTextBox.text = this.time.iterations.toString();
     }
     static ToHex(rgb) {
         const hex = rgb.toString(16);
