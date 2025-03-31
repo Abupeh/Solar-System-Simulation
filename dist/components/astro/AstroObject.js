@@ -22,6 +22,8 @@ export class AstroObject {
             color: "#99ccdd",
             distance: 450,
             thickness: 350,
+            tiers: 1,
+            tierPartition: 1,
         },
         atmosphere: {
             atmosphere: false,

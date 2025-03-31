@@ -58,26 +58,39 @@ export class AstroObjectDisplay {
         const offset = AstroObjectDisplay.textOffset * radius;
         this.global.ctx.fillText(name, x, y + (zero ? -offset : offset));
     }
-    renderRing({ kinematics: { position: { x, y }, }, properties: { luminosity, radius, rings: { rings, color, distance, thickness, composition }, spin, }, }, originalRadius, zero = false) {
+    renderRing({ kinematics: { position: { x, y }, }, properties: { luminosity, radius, rings: { rings, color, distance, thickness, composition, tiers, tierPartition, }, spin, }, }, originalRadius, zero = false) {
         if (!rings)
             return;
         this.global.ctx.save();
         this.global.ctx.translate(x, y);
-        if (zero)
-            this.global.ctx.rotate(Math.PI / 2.5 + (spin * Math.PI) / 360);
-        else
-            this.global.ctx.rotate((spin * Math.PI) / 180);
-        this.global.ctx.beginPath();
-        const zeroThickness = thickness * (radius / originalRadius);
-        const zeroDistance = distance * (radius / originalRadius);
-        const innerRadius = radius + zeroDistance;
-        const outerRadius = radius + zeroThickness + zeroDistance;
-        this.global.ctx.ellipse(0, 0, innerRadius - (radius + zeroThickness), innerRadius, 0, 0, Math.PI * 2);
-        this.global.ctx.ellipse(0, 0, outerRadius - (radius + zeroThickness), outerRadius + zeroThickness * 2, 0, 0, Math.PI * 2, true);
-        this.global.ctx.closePath();
-        const ringGradient = this.createCompositionalGradient(0, 0, outerRadius, color, composition, AstroObjectDisplay.ringColor);
-        this.global.ctx.fillStyle = ringGradient;
-        this.global.ctx.fill();
+        for (let i = 0; i < tiers; i++) {
+            const tierRotation = (i + 1) / 10;
+            const rotation = spin * Math.PI * tierRotation;
+            if (zero)
+                this.global.ctx.rotate((Math.PI / 2.5) * (i + 1));
+            else
+                this.global.ctx.rotate(rotation / 180);
+            this.global.ctx.beginPath();
+            const partitionRadius = radius * (tierPartition * i + 1);
+            const zeroThickness = thickness * (partitionRadius / originalRadius);
+            const partitionThickness = zeroThickness / (tierPartition * i + 1);
+            const zeroDistance = distance * (radius / originalRadius);
+            const seperation = zeroDistance * tierPartition * (i + 1);
+            const innerRadius = partitionRadius + seperation;
+            const outerRadius = partitionThickness + innerRadius;
+            let radiusX = innerRadius - (radius + zeroThickness);
+            if (radiusX < 0)
+                radiusX = 0;
+            this.global.ctx.ellipse(0, 0, radiusX, innerRadius + partitionThickness / 2, 0, 0, Math.PI * 2);
+            let outerRadiusX = outerRadius - (radius + zeroThickness);
+            if (outerRadiusX < 0)
+                outerRadiusX = 0;
+            this.global.ctx.ellipse(0, 0, outerRadiusX, outerRadius + partitionThickness * 2, 0, 0, Math.PI * 2, true);
+            this.global.ctx.closePath();
+            const ringGradient = this.createCompositionalGradient(0, 0, outerRadius, color, composition, AstroObjectDisplay.ringColor);
+            this.global.ctx.fillStyle = ringGradient;
+            this.global.ctx.fill();
+        }
         this.global.ctx.restore();
     }
     renderBody({ kinematics: { position: { x, y }, }, properties: { radius, luminosity, atmosphere: { atmosphere, color, composition }, }, }, zero = false, gradient) {
