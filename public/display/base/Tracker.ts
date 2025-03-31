@@ -1,8 +1,6 @@
 import { AstroObject } from "../../components/astro/AstroObject";
 import { Global } from "../../global/Global";
 export class Tracker {
-	public track = [0, 0];
-	public previousTrack = [0, 0];
 	public following?: AstroObject;
 	public reference = false;
 
@@ -25,18 +23,11 @@ export class Tracker {
 			? -this.following.kinematics.position.y
 			: 0;
 	};
-	trackFollow() {
-		this.previousTrack[0] = this.track[0];
-		this.previousTrack[1] = this.track[1];
-	}
 	follow(astroObject: AstroObject, camera = this.global.camera) {
 		this.following = astroObject;
 
-		this.track[0] = astroObject.kinematics.position.x;
-		this.track[1] = astroObject.kinematics.position.y;
-
-		camera.position.x = -this.previousTrack[0];
-		camera.position.y = -this.previousTrack[1];
+		camera.position.x = -astroObject.kinematics.position.x;
+		camera.position.y = -astroObject.kinematics.position.y;
 
 		if (this.reference) {
 			camera.position.x = 0;

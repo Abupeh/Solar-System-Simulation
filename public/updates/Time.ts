@@ -15,8 +15,8 @@ export class Time {
 	}
 
 	update(universe: Universe, trail: Trail, iterate: boolean) {
-		if(iterate) {
-			for(let i = 0; i < this.iterations; i++) {
+		if (iterate) {
+			for (let i = 0; i < this.iterations; i++) {
 				universe.updateAstroObjects();
 				universe.updateTrails(trail, iterate);
 			}
@@ -34,7 +34,7 @@ export class Time {
 	}
 	pause(forcePause = false) {
 		if (!this.pausedIterations || forcePause) {
-			if(this.iterations) this.pausedIterations = this.iterations;
+			if (this.iterations) this.pausedIterations = this.iterations;
 			this.iterations = 0;
 			return;
 		}

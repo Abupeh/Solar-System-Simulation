@@ -67,6 +67,8 @@ export class TextBox implements Controller {
 		this.text += event.key;
 	}
 
+	percent = false;
+
 	public complete() {
 		this.focused = false;
 		if (this.type == "color") this.text = TextBox.checkRGB(this.text);

@@ -27,7 +27,7 @@ export class Create {
         this.container.place(this.content.place, this.Controllers);
     }
     sideContainer() {
-        return new Container(this.global, Create.sideX, Create.sideY, Create.cutoffWidth, Create.sideHeight).useColor('secondary');
+        return new Container(this.global, Create.sideX, Create.sideY, Create.cutoffWidth, Create.sideHeight).useColor("secondary");
     }
     ControllerAssign(controller, key, arrayKey, objectKey) {
         this.controllerList.push(controller);
@@ -79,6 +79,8 @@ export class Create {
         const textbox = new TextBox(this.global, Create.initialX +
             Create.seperationX * (this.degree + 1) +
             Create.width * 1.5, Create.initialY + Create.seperationY * this.count, Create.width * 2, Create.height, property.toString(), Create.ToDisplay(key), type);
+        if (Create.percentProperties.includes(key))
+            textbox.percent = true;
         if (assign)
             this.ControllerAssign(textbox, key);
         return textbox;
@@ -129,6 +131,7 @@ export class Create {
         const replacedText = text.replace(/([a-z])([A-Z])/g, "$1 $2").trim();
         return replacedText.charAt(0).toUpperCase() + replacedText.slice(1);
     }
+    static percentProperties = ["habitability"];
     static initialX = 80.5;
     static initialY = 15;
     static seperationX = 3.8;

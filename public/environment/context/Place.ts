@@ -25,11 +25,12 @@ export class Place {
 	selected: AstroObject;
 
 	constructor(private global: Global, private universe: Universe) {
-		this.selected = new AstroObject(this.universe.format, new Kinematics());
+		this.selected =
+			this.global.tracker.following || new AstroObject(new Kinematics());
 	}
 
 	placeSelected(position: [number, number]) {
-		this.selected = new AstroObject(this.universe.format, new Kinematics());
+		this.selected = new AstroObject(new Kinematics());
 		this.selected.kinematics.position.x = position[0];
 		this.selected.kinematics.position.y = position[1];
 		this.universe.appendObject(this.selected);
@@ -40,10 +41,10 @@ export class Place {
 		properties: Properties = this.selected.properties
 	) {
 		for (const [key, value] of Object.entries(properties)) {
-			if(!(controllers[key as keyof Controllers])) continue;
+			if (!controllers[key as keyof Controllers]) continue;
 
 			if (typeof value == "string" || typeof value == "number") {
-				if((controllers[key as keyof Controllers] as TextBox).focused) continue;
+				if ((controllers[key as keyof Controllers] as TextBox).focused) continue;
 
 				(controllers[key as keyof Controllers] as TextBox).value = value;
 				(controllers[key as keyof Controllers] as TextBox).text = value.toString();
@@ -68,7 +69,10 @@ export class Place {
 				continue;
 			}
 
-			this.updateControllersToSelected(controllers[key as keyof Controllers], value);
+			this.updateControllersToSelected(
+				controllers[key as keyof Controllers],
+				value
+			);
 		}
 	}
 

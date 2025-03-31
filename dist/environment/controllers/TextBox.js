@@ -70,6 +70,7 @@ export class TextBox {
             return;
         this.text += event.key;
     }
+    percent = false;
     complete() {
         this.focused = false;
         if (this.type == "color")

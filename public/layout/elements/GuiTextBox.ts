@@ -1,7 +1,8 @@
 import { GuiElement } from "../class/GuiElement.js";
-import { TextBox } from "../../environment/controllers/TextBox.js";
+import { TextBox, TextBoxType } from "../../environment/controllers/TextBox.js";
 
 export class GuiTextBox extends GuiElement {
+	static DECIMAL_ALLOWANCE = 100;
 	static ROUNDNESS = 5;
 	static COLOR = "#28282888";
 	static FOCUSED_COLOR = "#55555588";
@@ -23,8 +24,16 @@ export class GuiTextBox extends GuiElement {
 		);
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
+
+		if (textbox.type == "number") {
+			textbox.text = (
+				Math.floor((new Number(textbox.text) as number) * GuiTextBox.DECIMAL_ALLOWANCE) /
+				GuiTextBox.DECIMAL_ALLOWANCE
+			).toString() as TextBoxType;
+		}
+
 		ctx.fillText(
-			textbox.text,
+			textbox.text + (textbox.percent ? "%" : ""),
 			textbox.x + textbox.width / 2,
 			textbox.y + textbox.height / 2
 		);
@@ -32,7 +41,7 @@ export class GuiTextBox extends GuiElement {
 
 	drawBase(textbox: TextBox, ctx = this.global.ctx) {
 		ctx.fillStyle = GuiTextBox.COLOR;
-		if(textbox.hover) ctx.fillStyle = GuiTextBox.HOVER_COLOR;
+		if (textbox.hover) ctx.fillStyle = GuiTextBox.HOVER_COLOR;
 		if (textbox.focused) ctx.fillStyle = GuiTextBox.FOCUSED_COLOR;
 		ctx.beginPath();
 		ctx.roundRect(

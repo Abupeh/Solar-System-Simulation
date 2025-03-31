@@ -24,7 +24,7 @@ export class Trail {
 		]);
 	}
 
-	draw({ trail, properties: { radius, color } }: AstroObject) {
+	draw({ trail, properties: { radius, color, name } }: AstroObject) {
 		if (trail.length < 1) return;
 		const trailSize = radius / Trail.TRAIL_WIDTH;
 		this.global.ctx.lineWidth =

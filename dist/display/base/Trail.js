@@ -19,7 +19,7 @@ export class Trail {
             astroObject.kinematics.position.y + followingY(),
         ]);
     }
-    draw({ trail, properties: { radius, color } }) {
+    draw({ trail, properties: { radius, color, name } }) {
         if (trail.length < 1)
             return;
         const trailSize = radius / Trail.TRAIL_WIDTH;

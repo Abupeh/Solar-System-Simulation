@@ -13,8 +13,8 @@ export class AstroPlace {
         this.global.astroObjectDisplay.draw(astroObject, true, this.mapX(AstroPlace.zeroRadius));
     }
     configureGui() {
-        const container = new Container(this.global, AstroPlace.sideX, AstroPlace.sideY, AstroPlace.sideWidth, AstroPlace.sideHeight).useColor('secondary');
-        const spaceContainer = new Container(this.global, AstroPlace.sideX + AstroPlace.paddingX, AstroPlace.sideY + AstroPlace.paddingY, AstroPlace.sideWidth - (AstroPlace.paddingX * 2), AstroPlace.sideHeight - (AstroPlace.paddingY * 2)).useColor('space');
+        const container = new Container(this.global, AstroPlace.sideX, AstroPlace.sideY, AstroPlace.sideWidth, AstroPlace.sideHeight).useColor("secondary");
+        const spaceContainer = new Container(this.global, AstroPlace.sideX + AstroPlace.paddingX, AstroPlace.sideY + AstroPlace.paddingY, AstroPlace.sideWidth - AstroPlace.paddingX * 2, AstroPlace.sideHeight - AstroPlace.paddingY * 2).useColor("space");
         return [container, spaceContainer];
     }
     mapX(location) {

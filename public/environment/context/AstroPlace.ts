@@ -30,15 +30,15 @@ export class AstroPlace {
 			AstroPlace.sideY,
 			AstroPlace.sideWidth,
 			AstroPlace.sideHeight
-		).useColor('secondary');
+		).useColor("secondary");
 
 		const spaceContainer = new Container(
 			this.global,
 			AstroPlace.sideX + AstroPlace.paddingX,
 			AstroPlace.sideY + AstroPlace.paddingY,
-			AstroPlace.sideWidth - (AstroPlace.paddingX * 2),
-			AstroPlace.sideHeight - (AstroPlace.paddingY * 2)
-		).useColor('space');
+			AstroPlace.sideWidth - AstroPlace.paddingX * 2,
+			AstroPlace.sideHeight - AstroPlace.paddingY * 2
+		).useColor("space");
 
 		return [container, spaceContainer];
 	}
@@ -56,7 +56,7 @@ export class AstroPlace {
 	static sideWidth = Create.cutoffWidth;
 	static sideHeight = 16;
 
-    static paddingX = 1.5;
+	static paddingX = 1.5;
 	static paddingY = 1;
 	static centerX = this.sideX + this.sideWidth / 2;
 	static centerY = this.sideY + this.sideHeight / 2;

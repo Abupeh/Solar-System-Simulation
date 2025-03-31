@@ -15,10 +15,10 @@ export class Content {
     constructor(global, universe) {
         this.global = global;
         this.universe = universe;
-        this.create = new Create(this.global, this.universe, this);
-        this.place = new Place(this.global, this.universe);
-        this.astroPlace = new AstroPlace(this.global);
         this.createButtons();
+        this.create = new Create(this.global, this.universe, this);
+        this.astroPlace = new AstroPlace(this.global);
+        this.place = new Place(this.global, this.universe);
         const astroPlaceGui = this.astroPlace.configureGui();
         const sideContainer = this.create.sideContainer();
         this.create.configureControllers(AstroObject.properties);
@@ -47,30 +47,30 @@ export class Content {
             if (!this.global.tracker.following)
                 return;
             this.clearReferenceTrails();
+            this.followingNumber++;
             if (this.universe.astroObjects.length <= this.followingNumber) {
                 this.followingNumber = 0;
             }
             this.global.tracker.following =
                 this.universe.astroObjects[this.followingNumber];
-            this.followingNumber++;
         });
         this.appendControllers(FollowUp);
         const FollowDown = new ActionButton(this.global, 1, 11, 5, 5, "<").onClick(() => {
             if (!this.global.tracker.following)
                 return;
             this.clearReferenceTrails();
+            this.followingNumber--;
             if (this.followingNumber < 0)
                 this.followingNumber = this.universe.astroObjects.length - 1;
             this.global.tracker.following =
                 this.universe.astroObjects[this.followingNumber];
-            this.followingNumber--;
         });
         this.appendControllers(FollowDown);
         const EndFollow = new ToggleButton(this.global, 7, 17, 5, 5, "Follow")
             .onClick(() => {
             if (this.global.tracker.following)
                 return (this.global.tracker.following = undefined);
-            this.global.tracker.following = this.universe.astroObjects[0];
+            this.global.tracker.following = this.universe.astroObjects[this.followingNumber];
         })
             .toggle();
         EndFollow.defaultClick();

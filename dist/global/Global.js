@@ -63,7 +63,6 @@ export class Global {
         }
         this.reset();
         if (this.time.iterations != 0) {
-            this.tracker.trackFollow();
             this.time.update(this.universe, this.trail, false);
             if (this.tracker.following)
                 this.tracker.follow(this.tracker.following);

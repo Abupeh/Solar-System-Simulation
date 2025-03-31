@@ -76,7 +76,7 @@ export class Universe {
                 break;
             case "precise":
                 const preciseAstroBody = body;
-                const astroObject = new AstroObject(this.format, new Kinematics(new Vector(preciseAstroBody.kinematics.position.x, preciseAstroBody.kinematics.position.y), new Vector(preciseAstroBody.kinematics.velocity.x, preciseAstroBody.kinematics.velocity.y)));
+                const astroObject = new AstroObject(new Kinematics(new Vector(preciseAstroBody.kinematics.position.x, preciseAstroBody.kinematics.position.y), new Vector(preciseAstroBody.kinematics.velocity.x, preciseAstroBody.kinematics.velocity.y)));
                 Object.assign(astroObject.properties, structuredClone(preciseAstroBody.properties));
                 this.appendObject(astroObject);
         }
@@ -85,7 +85,7 @@ export class Universe {
         body.update(this.astroObjects);
     }
     append(kinematics, properties) {
-        const astroObject = new AstroObject(this.format, new Kinematics(new Vector(...kinematics.position), kinematics.velocity && new Vector(...kinematics.velocity)));
+        const astroObject = new AstroObject(new Kinematics(new Vector(...kinematics.position), kinematics.velocity && new Vector(...kinematics.velocity)));
         Object.assign(astroObject.properties, structuredClone(properties));
         this.astroObjects.push(astroObject);
     }

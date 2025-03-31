@@ -11,17 +11,18 @@ export class Place {
     constructor(global, universe) {
         this.global = global;
         this.universe = universe;
-        this.selected = new AstroObject(this.universe.format, new Kinematics());
+        this.selected =
+            this.global.tracker.following || new AstroObject(new Kinematics());
     }
     placeSelected(position) {
-        this.selected = new AstroObject(this.universe.format, new Kinematics());
+        this.selected = new AstroObject(new Kinematics());
         this.selected.kinematics.position.x = position[0];
         this.selected.kinematics.position.y = position[1];
         this.universe.appendObject(this.selected);
     }
     updateControllersToSelected(controllers, properties = this.selected.properties) {
         for (const [key, value] of Object.entries(properties)) {
-            if (!(controllers[key]))
+            if (!controllers[key])
                 continue;
             if (typeof value == "string" || typeof value == "number") {
                 if (controllers[key].focused)

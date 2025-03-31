@@ -16,11 +16,10 @@ export class Content {
 	public place: Place;
 	public astroPlace: AstroPlace;
 	constructor(private global: Global, private universe: Universe) {
-		this.create = new Create(this.global, this.universe, this);
-		this.place = new Place(this.global, this.universe);
-		this.astroPlace = new AstroPlace(this.global);
-
 		this.createButtons();
+		this.create = new Create(this.global, this.universe, this);
+		this.astroPlace = new AstroPlace(this.global);
+		this.place = new Place(this.global, this.universe);
 
 		const astroPlaceGui = this.astroPlace.configureGui();
 
@@ -65,12 +64,12 @@ export class Content {
 			() => {
 				if (!this.global.tracker.following) return;
 				this.clearReferenceTrails();
+				this.followingNumber++;
 				if (this.universe.astroObjects.length <= this.followingNumber) {
 					this.followingNumber = 0;
 				}
 				this.global.tracker.following =
 					this.universe.astroObjects[this.followingNumber];
-				this.followingNumber++;
 			}
 		);
 		this.appendControllers(FollowUp);
@@ -78,11 +77,11 @@ export class Content {
 			() => {
 				if (!this.global.tracker.following) return;
 				this.clearReferenceTrails();
+				this.followingNumber--;
 				if (this.followingNumber < 0)
 					this.followingNumber = this.universe.astroObjects.length - 1;
 				this.global.tracker.following =
 					this.universe.astroObjects[this.followingNumber];
-				this.followingNumber--;
 			}
 		);
 		this.appendControllers(FollowDown);
@@ -91,7 +90,7 @@ export class Content {
 			.onClick(() => {
 				if (this.global.tracker.following)
 					return (this.global.tracker.following = undefined);
-				this.global.tracker.following = this.universe.astroObjects[0];
+				this.global.tracker.following = this.universe.astroObjects[this.followingNumber];
 			})
 			.toggle();
 		EndFollow.defaultClick();

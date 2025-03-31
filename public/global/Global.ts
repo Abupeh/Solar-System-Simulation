@@ -75,7 +75,6 @@ export class Global {
 		this.reset();
 
 		if (this.time.iterations != 0) {
-			this.tracker.trackFollow();
 			this.time.update(this.universe, this.trail, false);
 			if (this.tracker.following) this.tracker.follow(this.tracker.following);
 		}
@@ -101,11 +100,11 @@ export class Global {
 	}
 
 	guiUpdate() {
-		if(this.content.place.selected)
-		this.content.place.updateControllersToSelected(
-			this.content.create.Controllers,
-			this.content.place.selected.properties
-		);
+		if (this.content.place.selected)
+			this.content.place.updateControllersToSelected(
+				this.content.create.Controllers,
+				this.content.place.selected.properties
+			);
 	}
 
 	static ToHex(rgb: number) {

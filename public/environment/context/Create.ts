@@ -56,7 +56,7 @@ export class Create {
 			Create.sideY,
 			Create.cutoffWidth,
 			Create.sideHeight
-		).useColor('secondary');
+		).useColor("secondary");
 	}
 
 	ControllerAssign(
@@ -139,6 +139,7 @@ export class Create {
 			Create.ToDisplay(key),
 			type
 		);
+		if (Create.percentProperties.includes(key)) textbox.percent = true;
 		if (assign) this.ControllerAssign(textbox, key as keyof AstroProperties);
 		return textbox;
 	}
@@ -227,6 +228,7 @@ export class Create {
 		return replacedText.charAt(0).toUpperCase() + replacedText.slice(1);
 	}
 
+	static percentProperties = ["habitability"];
 	static initialX = 80.5;
 	static initialY = 15;
 	static seperationX = 3.8;
@@ -248,6 +250,7 @@ export class Create {
 
 	static cutoffX = this.sideX;
 	static cutoffY = this.sideY + this.containerY;
-	static cutoffWidth = this.sideWidth + (this.initialX - this.sideX) + this.containerX;
-	static cutoffHeight = this.sideHeight - this.containerY*2;
+	static cutoffWidth =
+		this.sideWidth + (this.initialX - this.sideX) + this.containerX;
+	static cutoffHeight = this.sideHeight - this.containerY * 2;
 }

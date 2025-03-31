@@ -105,7 +105,6 @@ export class Universe {
 			case "precise":
 				const preciseAstroBody = body as PreciseAstroData;
 				const astroObject = new AstroObject(
-					this.format,
 					new Kinematics(
 						new Vector(
 							preciseAstroBody.kinematics.position.x,
@@ -134,7 +133,6 @@ export class Universe {
 		properties: AstroProperties | ConsiceAstroData | PreciseAstroData
 	) {
 		const astroObject = new AstroObject(
-			this.format,
 			new Kinematics(
 				new Vector(...kinematics.position),
 				kinematics.velocity && new Vector(...kinematics.velocity)
